@@ -31,13 +31,13 @@ public class LoginFrame
 		shell.setSize(450, 300);
 		shell.setLocation(400, 200);
 		shell.setText("用户登录");
-		shell.setImage(SWTResourceManager.getImage(LoginFrame.class, "/images/logo.png"));
+		shell.setImage(SWTResourceManager.getImage(LoginFrame.class, "/images/index.ico"));
 
 		shell.setBackgroundImage(SWTResourceManager.getImage(LoginFrame.class, "/images/loginBG.jpg"));
 
 		Label lblUsername = new Label(shell, SWT.SHADOW_NONE | SWT.CENTER);
 		lblUsername.setBounds(71, 55, 86, 20);
-		lblUsername.setText("用户ID");
+		lblUsername.setText("用户名");
 
 		Label lblPassword = new Label(shell, SWT.CENTER);
 		lblPassword.setBounds(71, 111, 86, 20);

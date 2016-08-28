@@ -12,6 +12,10 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
@@ -30,6 +34,9 @@ import com.kindergarten.data.User;
 import com.kindergarten.service.RoleService;
 import com.kindergarten.service.UserService;
 import com.kindergarten.util.MessageBoxUtil;
+import com.kindergarten.util.listeners.AbstractMouseListener;
+
+import org.eclipse.swt.widgets.Button;
 
 public class UserAddDialog extends Dialog
 {
@@ -84,13 +91,21 @@ public class UserAddDialog extends Dialog
 		fd_useIdLabel.top = new FormAttachment(0, 18);
 		fd_useIdLabel.left = new FormAttachment(0, 10);
 		useIdLabel.setLayoutData(fd_useIdLabel);
-		useIdLabel.setText("用户ID");
+		useIdLabel.setText("用户名");
 
 		user_id = new Text(container, SWT.BORDER);
+		user_id.addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(ModifyEvent e)
+			{
+				userName.setText(user_id.getText());
+			}
+		});
+		fd_useIdLabel.right = new FormAttachment(user_id, -6);
 		FormData fd_user_id = new FormData();
-		fd_user_id.top = new FormAttachment(useIdLabel, -3, SWT.TOP);
-		fd_user_id.left = new FormAttachment(useIdLabel, 26);
-		fd_user_id.right = new FormAttachment(0, 199);
+		fd_user_id.top = new FormAttachment(0, 15);
+		fd_user_id.left = new FormAttachment(0, 72);
 		user_id.setLayoutData(fd_user_id);
 
 		if (selectedUser != null)
@@ -98,24 +113,29 @@ public class UserAddDialog extends Dialog
 			user_id.setEditable(false);
 			user_id.setEnabled(false);
 		}
+		/* 用户名称直接用用户ID来代替 */
 		Label lblNewLabel = new Label(container, SWT.NONE);
+		lblNewLabel.setVisible(false);
+		fd_user_id.right = new FormAttachment(lblNewLabel, -33);
 		FormData fd_lblNewLabel = new FormData();
-		fd_lblNewLabel.top = new FormAttachment(useIdLabel, 0, SWT.TOP);
-		fd_lblNewLabel.left = new FormAttachment(user_id, 33);
+		fd_lblNewLabel.top = new FormAttachment(0, 18);
+		fd_lblNewLabel.left = new FormAttachment(0, 232);
 		lblNewLabel.setLayoutData(fd_lblNewLabel);
 		lblNewLabel.setText("用户名");
 
 		userName = new Text(container, SWT.BORDER);
+		userName.setVisible(false);
 		FormData fd_userName = new FormData();
 		fd_userName.right = new FormAttachment(lblNewLabel, 182, SWT.RIGHT);
 		fd_userName.top = new FormAttachment(0, 15);
 		fd_userName.left = new FormAttachment(lblNewLabel, 24);
 		userName.setLayoutData(fd_userName);
+		/* 用户名称直接用用户ID来代替 */
 
 		Label lblNewLabel_1 = new Label(container, SWT.NONE);
 		FormData fd_lblNewLabel_1 = new FormData();
 		fd_lblNewLabel_1.top = new FormAttachment(useIdLabel, 29);
-		fd_lblNewLabel_1.left = new FormAttachment(useIdLabel, 0, SWT.LEFT);
+		fd_lblNewLabel_1.left = new FormAttachment(0, 10);
 		lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
 		lblNewLabel_1.setText("性别");
 
@@ -128,8 +148,8 @@ public class UserAddDialog extends Dialog
 		Label label = new Label(container, SWT.NONE);
 		fd_mail.top = new FormAttachment(label, -3, SWT.TOP);
 		FormData fd_label = new FormData();
+		fd_label.left = new FormAttachment(0, 10);
 		fd_label.top = new FormAttachment(lblNewLabel_1, 29);
-		fd_label.left = new FormAttachment(useIdLabel, 0, SWT.LEFT);
 		label.setLayoutData(fd_label);
 		label.setText("邮箱");
 
@@ -225,6 +245,50 @@ public class UserAddDialog extends Dialog
 		fd_combo_1.top = new FormAttachment(mail, 23);
 		fd_combo_1.left = new FormAttachment(label_2, 39);
 		combo_1.setLayoutData(fd_combo_1);
+
+		if (selectedUser != null)
+		{
+			Button btnResetPwd = new Button(container, SWT.NONE);
+			FormData fd_btnResetPwd = new FormData();
+			fd_btnResetPwd.top = new FormAttachment(combo_1, 26);
+			fd_btnResetPwd.left = new FormAttachment(useIdLabel, 0, SWT.LEFT);
+			btnResetPwd.setLayoutData(fd_btnResetPwd);
+			btnResetPwd.setText("重置密码");
+			btnResetPwd.addMouseListener(new MouseListener()
+			{
+				@Override
+				public void mouseDoubleClick(MouseEvent e)
+				{
+
+				}
+
+				@Override
+				public void mouseDown(MouseEvent e)
+				{
+
+				}
+
+				@Override
+				public void mouseUp(MouseEvent e)
+				{
+					int result = MessageBoxUtil.showConfirmMessageBox(getShell(), "确定要重置用户：" + selectedUser.getUserName() + " 的密码吗？");
+					if (SWT.OK == result)
+					{
+						UserService userService = new UserService();
+						try
+						{
+							userService.resetPassWord(selectedUser.getUserId());
+							MessageBoxUtil.showWarnMessageBox(getShell(), "密码已改为初始密码，请登录修改");
+						} catch (SQLException e1)
+						{
+							e1.printStackTrace();
+							MessageBoxUtil.showWarnMessageBox(getShell(), "密码重置失败，请确定数据库连接是否正常");
+						}
+					}
+				}
+			});
+		}
+
 		role.setContentProvider(new ArrayContentProvider()
 		{
 			@Override
@@ -276,6 +340,7 @@ public class UserAddDialog extends Dialog
 				return tmp.getRoleName();
 			}
 		});
+
 		role.setInput(roleList.toArray(new Role[0]));
 
 		if (selectedUser != null)
@@ -339,7 +404,7 @@ public class UserAddDialog extends Dialog
 		String userId = user_id.getText();
 		if (StringUtils.isBlank(userId))
 		{
-			MessageBoxUtil.showWarnMessageBox(getShell(), "用户ID不能为空");
+			MessageBoxUtil.showWarnMessageBox(getShell(), "用户名不能为空");
 			return;
 		}
 		String userNameValue = userName.getText();
@@ -380,7 +445,7 @@ public class UserAddDialog extends Dialog
 		{
 			if (userService.checkUserIsExisted(userId))
 			{
-				MessageBoxUtil.showWarnMessageBox(getShell(), "用户ID已经存在，请换一个用户ID");
+				MessageBoxUtil.showWarnMessageBox(getShell(), "用户名称已经存在，请换一个用户名");
 				return;
 			}
 			try

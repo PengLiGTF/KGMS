@@ -16,6 +16,30 @@ import com.kindergarten.util.DbUtils;
 
 public class UserService
 {
+	/**
+	 * 重置用户密码
+	 * */
+	public void resetPassWord(String userId) throws SQLException
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(" update user set user_password = MD5('super'), is_first='T' where user_id = ? ");
+		Connection connection = DbUtils.getConnection();
+		PreparedStatement pstmt = null;
+		try
+		{
+			pstmt = connection.prepareStatement(sb.toString());
+			pstmt.setString(1, userId);
+			pstmt.executeUpdate();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw e;
+		} finally
+		{
+			DbUtils.closeQuietly(pstmt);
+			DbUtils.closeQuietly(connection);
+		}
+	}
 
 	/**
 	 * 更新用户

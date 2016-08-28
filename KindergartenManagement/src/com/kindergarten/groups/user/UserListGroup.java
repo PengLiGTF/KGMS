@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -50,7 +51,7 @@ public class UserListGroup extends AbstractGroup
 
 		Label lblNewLabel = new Label(composite, SWT.NONE);
 		lblNewLabel.setBounds(10, 10, 61, 17);
-		lblNewLabel.setText("用户ID:");
+		lblNewLabel.setText("用户名:");
 
 		userID = new Text(composite, SWT.BORDER);
 		userID.setBounds(100, 7, 93, 23);
@@ -58,9 +59,11 @@ public class UserListGroup extends AbstractGroup
 		Label lblNewLabel_1 = new Label(composite, SWT.NONE);
 		lblNewLabel_1.setBounds(251, 10, 61, 17);
 		lblNewLabel_1.setText("用户名：");
+		lblNewLabel_1.setVisible(false);
 
 		userName = new Text(composite, SWT.BORDER);
 		userName.setBounds(318, 7, 102, 23);
+		userName.setVisible(false);
 
 		final Button btnQuery = new Button(composite, SWT.NONE);
 		btnQuery.setBounds(524, 5, 80, 27);
@@ -86,28 +89,75 @@ public class UserListGroup extends AbstractGroup
 		TableColumn tblclmnid = userIdColumn.getColumn();
 		tblclmnid.setWidth(100);
 		tblclmnid.setText("用户ID");
+		userIdColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				User user = (User) element;
+				return user.getUserId();
+			}
+		});
+		tblclmnid.dispose();
 
 		TableViewerColumn userNameColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnUerName = userNameColumn.getColumn();
 		tblclmnUerName.setWidth(100);
 		tblclmnUerName.setText("用户名");
+		userNameColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				User user = (User) element;
+				return user.getUserName();
+			}
+		});
 
 		TableViewerColumn userSexColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnUerSex = userSexColumn.getColumn();
 		tblclmnUerSex.setWidth(100);
 		tblclmnUerSex.setText("性别");
+		userSexColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				User user = (User) element;
+				return CommonUtil.getSexNameByCode(user.getUserSex());
+			}
+		});
 
 		TableViewerColumn userPhoneColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnNewPhone = userPhoneColumn.getColumn();
 		tblclmnNewPhone.setWidth(100);
 		tblclmnNewPhone.setText("电话号码");
+		userPhoneColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				User user = (User) element;
+				return user.getUserPhone();
+			}
+		});
 
 		TableViewerColumn userMailColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnMail = userMailColumn.getColumn();
 		tblclmnMail.setWidth(100);
 		tblclmnMail.setText("邮箱");
+		userMailColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				User user = (User) element;
+				return user.getUserMail();
+			}
+		});
+
 		tableViewer.setContentProvider(new MyTableStructedProvider());
-		tableViewer.setLabelProvider(new MyITableLabelProvider());
+		// tableViewer.setLabelProvider(new MyITableLabelProvider());
 
 		Map<String, String> inputMap = new HashMap<String, String>();
 		tableViewer.setInput(inputMap);
@@ -240,10 +290,14 @@ public class UserListGroup extends AbstractGroup
 					User user = (User) object;
 					try
 					{
-						new UserService().deleteUser(user.getUserId());
-						Map<String, String> map = new HashMap<String, String>();
-						MessageBoxUtil.showWarnMessageBox(getShell(), "用户删除成功");
-						tableViewer.setInput(map);
+						int result = MessageBoxUtil.showConfirmMessageBox(getShell(), "确定要删除用户：" + user.getUserName() + "吗？");
+						if (result == SWT.OK)
+						{
+							new UserService().deleteUser(user.getUserId());
+							Map<String, String> map = new HashMap<String, String>();
+							MessageBoxUtil.showWarnMessageBox(getShell(), "用户删除成功");
+							tableViewer.setInput(map);
+						}
 					} catch (SQLException e1)
 					{
 						MessageBoxUtil.showWarnMessageBox(getShell(), "用户删除失败");
@@ -255,59 +309,6 @@ public class UserListGroup extends AbstractGroup
 					return;
 				}
 			}
-		}
-	}
-
-	static class MyITableLabelProvider implements ITableLabelProvider
-	{
-		@Override
-		public void addListener(ILabelProviderListener listener)
-		{
-		}
-
-		@Override
-		public void dispose()
-		{
-		}
-
-		@Override
-		public boolean isLabelProperty(Object element, String property)
-		{
-			return false;
-		}
-
-		@Override
-		public void removeListener(ILabelProviderListener listener)
-		{
-		}
-
-		@Override
-		public Image getColumnImage(Object element, int columnIndex)
-		{
-			return null;
-		}
-
-		@Override
-		public String getColumnText(Object element, int columnIndex)
-		{
-			if (element != null)
-			{
-				User user = (User) element;
-				switch (columnIndex)
-				{
-				case 0:
-					return user.getUserId();
-				case 1:
-					return user.getUserName();
-				case 2:
-					return CommonUtil.getSexNameByCode(user.getUserSex());
-				case 3:
-					return user.getUserPhone();
-				case 4:
-					return user.getUserMail();
-				}
-			}
-			return null;
 		}
 	}
 
