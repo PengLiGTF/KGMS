@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Fri Aug 26 00:08:26 CST 2016
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=KindergartenManagement_fat.jar
+manifest.mergeall=true
+manifest.mainclass=com.kindergarten.LoginFrame
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=
