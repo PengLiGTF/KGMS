@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class KinderFeeInfo
 {
-	public static final int AUDITED = 0;
-	public static final int UNAUDITED = 1;
+	// public static final int AUDITED = 0;
+	// public static final int UNAUDITED = 1;
 
 	// kinder_fee_history历史表中主键
 	private int kinderFeeInfoId;

@@ -106,7 +106,7 @@ CREATE TABLE `kinder_fee_history` (
   `other_money` int(11) DEFAULT NULL,
   `actual_money` int(11) DEFAULT NULL,
   `pre_fee` int(11) DEFAULT NULL,
-  `feeVoucher_status` int(11) DEFAULT NULL,
+  `feeVoucher_status` int(11) DEFAULT 101,
   `fee_event` varchar(20) DEFAULT NULL,
   `deduction_prefee` int(11) DEFAULT NULL,
   `fee_type` varchar(50) DEFAULT NULL,
@@ -243,7 +243,7 @@ CREATE TABLE `sequence` (
 
 /*Data for the table `sequence` */
 
-insert  into `sequence`(`name`,`current_value`,`increment`) values ('kinderFeeIdSeq',100000026,1),('kinderIdSeq',38,1),('kinderPreFeeIdSeq',200000012,1),('kinderRenewFeeIdSeq',300000003,1);
+insert  into `sequence`(`name`,`current_value`,`increment`) values ('kinderFeeIdSeq',100000000,1),('kinderIdSeq',38,1),('kinderPreFeeIdSeq',200000000,1),('kinderRenewFeeIdSeq',300000000,1);
 
 /*Table structure for table `test` */
 

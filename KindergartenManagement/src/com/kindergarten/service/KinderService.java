@@ -36,10 +36,10 @@ public class KinderService
 			pstmt = conn.prepareStatement(sb.toString());
 			pstmt.setString(1, kinderId);
 			resultSet = pstmt.executeQuery();
-			while(resultSet.next())
+			while (resultSet.next())
 			{
 				int num = resultSet.getInt("kinders");
-				if(num > 0)
+				if (num > 0)
 				{
 					existed = true;
 				}
@@ -53,12 +53,12 @@ public class KinderService
 			DbUtils.closeQuietly(pstmt);
 			DbUtils.closeQuietly(conn);
 		}
-		
+
 		return existed;
 	}
-	
+
 	/**
-	 * 预交费学生入园处理，需要更新学生的预交费记录
+	 * 预交费学生入园处理，需要更新学生的预交费记录 ，将预交费记录设置为 作废状态，重新插入一条记录
 	 * 
 	 * @throws SQLException
 	 * 
@@ -79,7 +79,7 @@ public class KinderService
 			double preFeeLeft = preFeeKinder.getPreFeeMoney() - deductionPreFee;
 			preFeeKinder.setPreFeeMoney(preFeeLeft);
 			addKinderWithTransaction(kinder, connection);
-			// 更新预交费状态
+			// 重新插入一条预交费记录，更新预交费状态
 			addPrefeeRecord(preFeeKinder, connection);
 			connection.commit();
 			connection.setAutoCommit(true);
@@ -119,6 +119,7 @@ public class KinderService
 			DbUtils.closeQuietly(conn);
 		}
 	}
+
 	/**
 	 * 改变学生缴费记录为作废
 	 * 
@@ -276,7 +277,7 @@ public class KinderService
 		sb.append(" and c.grade_id like ? ");
 		sb.append(" and d.class_id like ? ");
 		sb.append(" and t.kinder_status_Code like ? ");
-		
+
 		Connection connection = DbUtils.getConnection();
 		PreparedStatement pstmt = null;
 		ResultSet resultSet = null;
@@ -421,7 +422,7 @@ public class KinderService
 		sb.append(" WHERE a.`kinder_id` = b.`kinder_id` and a.fee_type != 'preFee' and a.kinder_id like ? ");
 		if (!isAdmin)
 		{
-            sb.append(" and (a.feeVoucher_status = '102' or a.feeVoucher_status != '103' ) ");//反审核
+			sb.append(" and (a.feeVoucher_status = '102' or a.feeVoucher_status != '103' ) ");// 反审核
 		}
 		sb.append("  order by fee_expire_time desc");
 		sb.append(" ) t GROUP BY t.`kinder_id`");

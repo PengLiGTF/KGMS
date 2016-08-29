@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 import net.sf.paperclips.ImagePrint;
-import net.sf.paperclips.StyledTextPrint;
-import net.sf.paperclips.TextStyle;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -52,7 +50,6 @@ import com.kindergarten.util.FeeTypeConstant;
 import com.kindergarten.util.MessageBoxUtil;
 import com.kindergarten.util.MyComboType;
 import com.kindergarten.util.NumberToCN;
-import com.kindergarten.util.print.KinderFeePrintDialog;
 import com.kindergarten.util.print.KinderPrintTool;
 import com.kindergarten.util.print.KinderPrinterModel;
 import com.kindergarten.util.print.StudentFeePrintUtil;
@@ -214,7 +211,7 @@ public class KinderFeeRenewGroup extends AbstractGroup
 					Date date = temp.getFeeExpireTime();
 					Calendar cl = Calendar.getInstance();
 					cl.setTime(date);
-					cl.add(Calendar.DATE, Integer.parseInt(renewValue));
+					cl.add(Calendar.MONTH, Integer.parseInt(renewValue) / 30);
 					renewExpireTime.setDate(cl.get(Calendar.YEAR), cl.get(Calendar.MONTH), cl.get(Calendar.DATE));
 				}
 			}
@@ -267,6 +264,12 @@ public class KinderFeeRenewGroup extends AbstractGroup
 					return;
 				}
 				int feeDayValue = Integer.parseInt(renewDays.getText());
+				
+				if(feeDayValue % 30 != 0)
+				{
+					MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数必须为30的倍数");
+					return;
+				}
 
 				String pMoneyStr = previlegeMoneyText.getText();
 				double privilegeMoney = 0.00D;
@@ -364,7 +367,7 @@ public class KinderFeeRenewGroup extends AbstractGroup
 				feeInfo.setFeeExpireTime(feeExpire);
 				feeInfo.setFeeTemplateId(feeTemplateId);
 				feeInfo.setFeeTime(feeTime);
-				feeInfo.setFeeVoucherStatus(KinderFeeInfo.AUDITED);
+				feeInfo.setFeeVoucherStatus(CommonUtil.CHECKED);
 				User user = new User();
 				user.setUserId(operatorId);
 				feeInfo.setOperator(user);
@@ -387,13 +390,13 @@ public class KinderFeeRenewGroup extends AbstractGroup
 					MessageBoxUtil.showWarnMessageBox(getShell(), "学生续费成功");
 					e1.printStackTrace();
 				}
-//				/* ----------------------------------- */
-//				Control[] controls = parent.getChildren();
-//				if (controls != null && controls.length > 0)
-//				{
-//					controls[0].dispose();
-//				}
-//				new ExpireFeeKindersGroup(parent, SWT.NONE, userId);
+				// /* ----------------------------------- */
+				// Control[] controls = parent.getChildren();
+				// if (controls != null && controls.length > 0)
+				// {
+				// controls[0].dispose();
+				// }
+				// new ExpireFeeKindersGroup(parent, SWT.NONE, userId);
 			}
 		});
 
@@ -539,12 +542,12 @@ public class KinderFeeRenewGroup extends AbstractGroup
 				FeeTemplate feeTemplate = (FeeTemplate) SelectedFeeTemplate.getFirstElement();
 				double mount = feeTemplate.getFeeAmount();
 				String renewDaysStr = renewDays.getText();
-				if(StringUtils.isBlank(renewDaysStr))
+				if (StringUtils.isBlank(renewDaysStr))
 				{
 					MessageBoxUtil.showWarnMessageBox(getShell(), "请输入续费天数");
 					return;
 				}
-				if(!CommonUtil.isDigital(renewDaysStr))
+				if (!CommonUtil.isDigital(renewDaysStr))
 				{
 					MessageBoxUtil.showWarnMessageBox(getShell(), "续费天数只能是数字");
 					return;
@@ -620,9 +623,10 @@ public class KinderFeeRenewGroup extends AbstractGroup
 			@Override
 			public void mouseUp(MouseEvent e)
 			{
-//				StyledTextPrint doc = new StyledTextPrint();
-//				TextStyle normal = new TextStyle().font("Arial", 20, SWT.NORMAL);
-//				TextStyle bold = normal.fontStyle(SWT.BOLD);
+				// StyledTextPrint doc = new StyledTextPrint();
+				// TextStyle normal = new TextStyle().font("Arial", 20,
+				// SWT.NORMAL);
+				// TextStyle bold = normal.fontStyle(SWT.BOLD);
 				Calendar cal = Calendar.getInstance();
 				cal.set(operTime.getYear(), operTime.getMonth(), operTime.getDay());
 				String checkId = CommonUtil.generateRenewFeeCheckId();
@@ -636,26 +640,40 @@ public class KinderFeeRenewGroup extends AbstractGroup
 				printerModel.setFeeDays(renewDays.getText() + "天");
 				printerModel.setPrivelegeMoney(previlegeMoneyText.getText());
 				printerModel.setOtherMoney(otherFeeText.getText());
-				//printerModel.setPreFeeMoney("");
-//				printerModel.setDeductionPreFeeMoney(deductionPreFeeText.getText());
+				// printerModel.setPreFeeMoney("");
+				// printerModel.setDeductionPreFeeMoney(deductionPreFeeText.getText());
 				printerModel.setAmountMoney(actualFee.getText());
 				printerModel.setOperatorName(operatorUserId.getText());
 				printerModel.setOperDate(cal.getTime());
 				KinderPrintTool.print(printerModel);
-//				
-//				doc.setStyle(normal).append(createSampleImage()).append("                       学生续费证明", bold).newline().newline()
-//						.append("-------------------------------------------------------------").newline().append("单据号：", bold)
-//						.append(checkId, normal.underline()).newline().append("学号：").append(kinderIdText.getText(), normal.underline()).newline().append("姓名：")
-//						.append(kinderNameText.getText(), normal.underline()).newline().append("年级：")
-//						.append(comboViewerGrade.getCombo().getText(), normal.underline()).newline().append("班级：")
-//						.append(comboViewerClass.getCombo().getText(), normal.underline()).newline().append("收费标准：")
-//						.append(comboViewerFeeTemplate.getCombo().getText(), normal.underline()).newline().append("收费时间段：")
-//						.append(renewDays.getText() + "/天", normal.underline()).newline().append("优惠额：")
-//						.append(previlegeMoneyText.getText(), normal.underline()).newline().append("其他费用(学杂和园备服费用)：")
-//						.append(otherFeeText.getText(), normal.underline()).newline().append("实收金额：").append(actualFee.getText(), normal.underline()).newline()
-//						.append("经办人：").append(operatorUserId.getText(), normal.underline()).newline().append("经办时间：")
-//						.append(CommonUtil.formatDateToString(cal.getTime(), CommonUtil.TIME_FORMAT_PATTERN), normal.underline());
-//				new KinderFeePrintDialog(getShell(), doc).open();
+				//
+				// doc.setStyle(normal).append(createSampleImage()).append("                       学生续费证明",
+				// bold).newline().newline()
+				// .append("-------------------------------------------------------------").newline().append("单据号：",
+				// bold)
+				// .append(checkId,
+				// normal.underline()).newline().append("学号：").append(kinderIdText.getText(),
+				// normal.underline()).newline().append("姓名：")
+				// .append(kinderNameText.getText(),
+				// normal.underline()).newline().append("年级：")
+				// .append(comboViewerGrade.getCombo().getText(),
+				// normal.underline()).newline().append("班级：")
+				// .append(comboViewerClass.getCombo().getText(),
+				// normal.underline()).newline().append("收费标准：")
+				// .append(comboViewerFeeTemplate.getCombo().getText(),
+				// normal.underline()).newline().append("收费时间段：")
+				// .append(renewDays.getText() + "/天",
+				// normal.underline()).newline().append("优惠额：")
+				// .append(previlegeMoneyText.getText(),
+				// normal.underline()).newline().append("其他费用(学杂和园备服费用)：")
+				// .append(otherFeeText.getText(),
+				// normal.underline()).newline().append("实收金额：").append(actualFee.getText(),
+				// normal.underline()).newline()
+				// .append("经办人：").append(operatorUserId.getText(),
+				// normal.underline()).newline().append("经办时间：")
+				// .append(CommonUtil.formatDateToString(cal.getTime(),
+				// CommonUtil.TIME_FORMAT_PATTERN), normal.underline());
+				// new KinderFeePrintDialog(getShell(), doc).open();
 			}
 
 			private ImagePrint createSampleImage()

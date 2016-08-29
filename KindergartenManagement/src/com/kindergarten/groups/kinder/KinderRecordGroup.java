@@ -14,14 +14,10 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
@@ -415,7 +411,11 @@ public class KinderRecordGroup extends AbstractGroup
 					return;
 				}
 				int feeDayValue = Integer.parseInt(feeDays.getText());
-
+				if (feeDayValue <= 0 || feeDayValue % 30 != 0)
+				{
+					MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数只能是30的倍数");
+					return;
+				}
 				String pMoneyStr = privilegeAmount.getText();
 				double privilegeMoney = 0.00D;
 				if (!StringUtils.isBlank(pMoneyStr))
@@ -486,7 +486,7 @@ public class KinderRecordGroup extends AbstractGroup
 				feeInfo.setFeeExpireTime(feeExpire);
 				feeInfo.setFeeTemplateId(feeTemplateId);
 				feeInfo.setFeeTime(feeTime);
-				feeInfo.setFeeVoucherStatus(KinderFeeInfo.AUDITED);
+				feeInfo.setFeeVoucherStatus(CommonUtil.CHECKED);
 				feeInfo.setDeductionPreFee(Double.parseDouble(deductionStr));
 				User user = new User();
 				user.setUserId(operatorId);
@@ -793,9 +793,11 @@ public class KinderRecordGroup extends AbstractGroup
 			MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数只能输入数字且不能以0开头");
 			return;
 		}
+		int days = Integer.parseInt(value);
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(feeStartTime.getYear(), feeStartTime.getMonth(), feeStartTime.getDay());
-		calendar.add(Calendar.DATE, Integer.parseInt(value) - 1);
+		int months = days / 30;
+		calendar.add(Calendar.MONTH, months);
 		feeExpireTime.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
 	}
 }

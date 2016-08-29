@@ -192,7 +192,6 @@ public class KinderLastFeeGroup extends AbstractGroup
 				}
 				if (!isAdmin)
 				{
-					btnInvalid.setVisible(true);
 					btnUnCheck.setEnabled(false);
 					if(feeStatus == 102)
 					{
@@ -222,6 +221,7 @@ public class KinderLastFeeGroup extends AbstractGroup
 				editorEdit.horizontalAlignment = SWT.LEFT;
 				editorEdit.setEditor(btnEdit, item, cell.getColumnIndex());
 				editorEdit.layout();
+				
 				TableEditor editorInvalid = new TableEditor(item.getParent());
 				editorInvalid.grabHorizontal = false;
 				editorInvalid.minimumWidth = 30;
@@ -229,13 +229,16 @@ public class KinderLastFeeGroup extends AbstractGroup
 				editorInvalid.horizontalAlignment = SWT.CENTER;
 				editorInvalid.setEditor(btnInvalid, item, cell.getColumnIndex());
 				editorInvalid.layout();
-				TableEditor editorUnCheck = new TableEditor(item.getParent());
-				editorUnCheck.grabHorizontal = false;
-				editorUnCheck.grabVertical = true;
-				editorUnCheck.minimumWidth = 40;
-				editorUnCheck.horizontalAlignment = SWT.RIGHT;
-				editorUnCheck.setEditor(btnUnCheck, item, cell.getColumnIndex());
-				editorUnCheck.layout();
+				if(isAdmin)
+				{
+					TableEditor editorUnCheck = new TableEditor(item.getParent());
+					editorUnCheck.grabHorizontal = false;
+					editorUnCheck.grabVertical = true;
+					editorUnCheck.minimumWidth = 40;
+					editorUnCheck.horizontalAlignment = SWT.RIGHT;
+					editorUnCheck.setEditor(btnUnCheck, item, cell.getColumnIndex());
+					editorUnCheck.layout();
+				}
 			}
 
 			class OperMouseListener implements MouseListener
@@ -331,10 +334,10 @@ public class KinderLastFeeGroup extends AbstractGroup
 				String kinderIdValue = kinderText.getText();
 				KinderService feeService = new KinderService();
 				List<KinderFeeInfo> feeHisList = feeService.queryLastedFeeRecord(kinderIdValue, isAdmin);
-				if (feeHisList == null || feeHisList.isEmpty())
-				{
-					// 查询没有数据时，需要把表格中的按钮给disposed掉
-					feeHisList = new ArrayList<KinderFeeInfo>();
+//				if (feeHisList == null || feeHisList.isEmpty())
+//				{
+//					// 查询没有数据时，需要把表格中的按钮给disposed掉
+//					feeHisList = new ArrayList<KinderFeeInfo>();
 					Collection<List<Button>> btnList = buttons.values();
 					for (List<Button> btns : btnList)
 					{
@@ -343,7 +346,7 @@ public class KinderLastFeeGroup extends AbstractGroup
 							bu.dispose();
 						}
 					}
-				}
+//				}
 				checkboxTableViewer.setInput(feeHisList.toArray(new KinderFeeInfo[0]));
 			}
 		});

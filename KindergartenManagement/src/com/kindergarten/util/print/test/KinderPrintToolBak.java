@@ -1,4 +1,4 @@
-package com.kindergarten.util.print;
+package com.kindergarten.util.print.test;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -14,8 +14,11 @@ import java.awt.print.PrinterJob;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class KinderPrintTool
+import com.kindergarten.util.print.KinderPrinterModel;
+
+public class KinderPrintToolBak
 {
+
 	public static void main(String[] args)
 	{
 		KinderPrinterModel model = new KinderPrinterModel();
@@ -81,12 +84,12 @@ public class KinderPrintTool
 		pf.setOrientation(PageFormat.PORTRAIT);
 		// 通过Paper设置页面的空白边距和可打印区域。必须与实际打印纸张大小相符。
 		Paper p = new Paper();
-		p.setSize(560, 180);// 纸张大小
+		p.setSize(280, 120);// 纸张大小
 		// A4(595 X 842)设置打印区域，其实0，0应该是72，72，因为A4纸的默认X,Y边距是72
-		p.setImageableArea(10, 10, 560, 180);
+		p.setImageableArea(10, 10, 280, 120);
 		pf.setPaper(p);
 		// 把 PageFormat 和 Printable 添加到书中，组成一个页面
-		book.append(new FeePrinter(model), pf);
+		book.append(new PreFeePrinter(model), pf);
 		// 获取打印服务对象
 		PrinterJob job = PrinterJob.getPrinterJob();
 		// 设置打印类
@@ -137,36 +140,34 @@ public class KinderPrintTool
 			double xPoint = pageFormat.getImageableX();
 			double yPoint = pageFormat.getImageableY();
 			System.out.println("打印起点坐标值是{" + xPoint + "," + yPoint + "}。");
-			Font font = new Font("新宋体", Font.TRUETYPE_FONT, 10);
+			Font font = new Font("新宋体", Font.TRUETYPE_FONT, 6);
 			graphics2D.setFont(font);// 设置字体
 			BasicStroke basicStroke = new BasicStroke(0.5f);
 			graphics2D.setStroke(basicStroke);// 设置线宽
 			float height = font.getSize2D();// 字体高度
 			System.out.println("字体高度是" + height);
 			// 绘制收据标题
-
-			double pageWidth = pageFormat.getWidth();
-			double centerIndex = pageWidth / 2;// 中间位置
-			double titleStartIndex = centerIndex - 4 * xPoint;// 中间标题x坐标
-			double titleEndIndex = centerIndex + 4 * xPoint;// 中间标题x坐标
-			double checkNoIndex = centerIndex + centerIndex / 2;
-
-			graphics2D.drawString(receiptTitle, (float) titleStartIndex, (float) yPoint + 1 * height);
+			
+			pageFormat.getWidth();
+			
+			
+			
+			graphics2D.drawString(receiptTitle, (float) (xPoint * 12), (float) yPoint + 1 * height);
 			// 绘制收据编号
-			graphics2D.drawString("No.:" + checkId, (float) checkNoIndex, (float) yPoint + 1 * height);
+			graphics2D.drawString("No.:" + checkId, (float) xPoint * 21, (float) yPoint + 1 * height);
 			// 绘制打印时间
 			SimpleDateFormat myDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
-			graphics2D.drawString(myDateFormat.format(model.getOperDate()), (float) checkNoIndex, (float) yPoint + 2 * height);
+			graphics2D.drawString(myDateFormat.format(model.getOperDate()), (float) xPoint * 21, (float) yPoint + 2 * height);
 			// 绘制收据标题下面画二条横线
-			graphics2D.drawLine((int) titleStartIndex, (int) (yPoint + 1 * height + 5), (int) titleEndIndex, (int) (yPoint + 1 * height + 5));
-			graphics2D.drawLine((int) titleStartIndex, (int) (yPoint + 1 * height + 7), (int) titleEndIndex, (int) (yPoint + 1 * height + 7));
+			graphics2D.drawLine(115, (int) (yPoint + 1 * height + 5), 160, (int) (yPoint + 1 * height + 5));
+			graphics2D.drawLine(115, (int) (yPoint + 1 * height + 7), 160, (int) (yPoint + 1 * height + 7));
 
 			// 边界四个点,从左上顺时针依次为1，2,3,4
 			int border1X = (int) (xPoint * 1.5);
 			int border1Y = (int) (yPoint + 3 * height);
 			int border4X = border1X;
 			int border4Y = (int) (border1Y + (int) 11 * height);
-			int border2X = (int) (pageWidth - xPoint);
+			int border2X = (int) (xPoint * 27);
 			int border2Y = border1Y;
 			int border3X = border2X;
 			int border3Y = border4Y;
@@ -176,15 +177,15 @@ public class KinderPrintTool
 			graphics2D.drawLine(border4X, border4Y, border3X, border3Y);
 			// 结束 画边框
 			float rowY = (float) yPoint + 5 * height;
-			float rowX1 = (float) xPoint * 3;// label
-			float rowX2 = (float) (rowX1 + xPoint * 8);// text
-			float rowX3 = (float) centerIndex;// label
-			float rowX4 = (float) (rowX3 + 6 * xPoint);// text
+			float rowX1 = (float) xPoint * 2;// label
+			float rowX2 = (float) xPoint * 5;// text
+			float rowX3 = (float) xPoint * 15;// label
+			float rowX4 = (float) xPoint * 18;// text
 			int lineY = (int) (rowY + 2);
-			int lineX1 = (int) (rowX2 - xPoint * 3);// 第一行第一条线第一个点
-			int lineX2 = (int) rowX3;// 第一行第一条线第二个点
-			int lineX3 = (int) (rowX4 - xPoint);// 第一行第二条线第一个点
-			int lineX4 = (int) (pageWidth - 2 * xPoint);// 第一行第二条线第二个点
+			int lineX1 = (int) rowX2;
+			int lineX2 = (int) rowX3;
+			int lineX3 = (int) rowX4;
+			int lineX4 = (int) xPoint * 26;
 			// 正文1—学号 姓名
 			graphics2D.drawString("学号", rowX1, rowY);
 			graphics2D.drawString(model.getKinderId(), rowX2, rowY);
@@ -240,11 +241,11 @@ public class KinderPrintTool
 
 			// 签字(收款人)
 			rowY = rowY + 4f * height;
-			graphics2D.drawString("签字(收款人)", (float) centerIndex + 3, rowY);
-			graphics2D.drawString(model.getOperatorName(), (float) (centerIndex + xPoint * 13), rowY);
+			graphics2D.drawString("签字(收款人)", (float) xPoint * 17 + 3, rowY);
+			graphics2D.drawString(model.getOperatorName(), (float) xPoint * 23, rowY);
 			// 签字（收款人)下划线
 			rowY += 2;
-			graphics2D.drawLine((int) (centerIndex + 8 * xPoint), (int) rowY, lineX4, (int) rowY);
+			graphics2D.drawLine((int) xPoint * 20, (int) rowY, lineX4, (int) rowY);
 			return 0;
 		}
 	}
@@ -263,7 +264,7 @@ public class KinderPrintTool
 		@Override
 		public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException
 		{
-			String receiptTitle = "预缴费收款收据";
+			String receiptTitle = "收款收据";
 			String checkId = model.getCheckId();
 			// 转换成Graphics2D
 			Graphics2D graphics2D = (Graphics2D) graphics;
@@ -273,36 +274,26 @@ public class KinderPrintTool
 			double xPoint = pageFormat.getImageableX();
 			double yPoint = pageFormat.getImageableY();
 			System.out.println("打印起点坐标值是{" + xPoint + "," + yPoint + "}。");
-			Font font = new Font("新宋体", Font.TRUETYPE_FONT, 10);
+			Font font = new Font("新宋体", Font.TRUETYPE_FONT, 6);
 			graphics2D.setFont(font);// 设置字体
 			BasicStroke basicStroke = new BasicStroke(0.5f);
 			graphics2D.setStroke(basicStroke);// 设置线宽
 			float height = font.getSize2D();// 字体高度
 			System.out.println("字体高度是" + height);
 			// 绘制收据标题
-
-			double pageWidth = pageFormat.getWidth();
-			double centerIndex = pageWidth / 2;// 中间位置
-			double titleStartIndex = centerIndex - 4 * xPoint;// 中间标题x坐标
-			double titleEndIndex = centerIndex + 4 * xPoint;// 中间标题x坐标
-			double checkNoIndex = centerIndex + centerIndex / 2;
-
-			graphics2D.drawString(receiptTitle, (float) titleStartIndex, (float) yPoint + 1 * height);
+			graphics2D.drawString(receiptTitle, (float) (xPoint * 12), (float) yPoint + 1 * height);
 			// 绘制收据编号
-			graphics2D.drawString("No.:" + checkId, (float) checkNoIndex, (float) yPoint + 1 * height);
+			graphics2D.drawString("No.:" + checkId, (float) xPoint * 21, (float) yPoint + 1 * height);
 			// 绘制打印时间
 			SimpleDateFormat myDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
-			graphics2D.drawString(myDateFormat.format(model.getOperDate()), (float) checkNoIndex, (float) yPoint + 2 * height);
-			// 绘制收据标题下面画二条横线
-			graphics2D.drawLine((int) titleStartIndex, (int) (yPoint + 1 * height + 5), (int) titleEndIndex, (int) (yPoint + 1 * height + 5));
-			graphics2D.drawLine((int) titleStartIndex, (int) (yPoint + 1 * height + 7), (int) titleEndIndex, (int) (yPoint + 1 * height + 7));
+			graphics2D.drawString(myDateFormat.format(model.getOperDate()), (float) xPoint * 21, (float) yPoint + 2 * height);
 
 			// 边界四个点,从左上顺时针依次为1，2,3,4
 			int border1X = (int) (xPoint * 1.5);
 			int border1Y = (int) (yPoint + 3 * height);
 			int border4X = border1X;
 			int border4Y = (int) (border1Y + (int) 11 * height);
-			int border2X = (int) (pageWidth - xPoint);
+			int border2X = (int) (xPoint * 27);
 			int border2Y = border1Y;
 			int border3X = border2X;
 			int border3Y = border4Y;
@@ -311,16 +302,20 @@ public class KinderPrintTool
 			graphics2D.drawLine(border2X, border2Y, border3X, border3Y);
 			graphics2D.drawLine(border4X, border4Y, border3X, border3Y);
 			// 结束 画边框
-			float rowY = (float) yPoint + 5 * height;
-			float rowX1 = (float) xPoint * 3;// label
-			float rowX2 = (float) (rowX1 + xPoint * 8);// text
-			float rowX3 = (float) centerIndex;// label
-			float rowX4 = (float) (rowX3 + 6 * xPoint);// text
+
+			// 绘制收据标题下面画二条横线
+			graphics2D.drawLine(115, (int) (yPoint + 1 * height + 5), 160, (int) (yPoint + 1 * height + 5));
+			graphics2D.drawLine(115, (int) (yPoint + 1 * height + 7), 160, (int) (yPoint + 1 * height + 7));
+			float rowY = (float) (yPoint + 4.5 * height);
+			float rowX1 = (float) xPoint * 2;// label
+			float rowX2 = (float) xPoint * 5;// text
+			float rowX3 = (float) xPoint * 15;// label
+			float rowX4 = (float) xPoint * 18;// text
 			int lineY = (int) (rowY + 2);
-			int lineX1 = (int) (rowX2 - xPoint * 3);// 第一行第一条线第一个点
-			int lineX2 = (int) rowX3;// 第一行第一条线第二个点
-			int lineX3 = (int) (rowX4 - xPoint);// 第一行第二条线第一个点
-			int lineX4 = (int) (pageWidth - 2 * xPoint);// 第一行第二条线第二个点
+			int lineX1 = (int) rowX2;
+			int lineX2 = (int) rowX3;
+			int lineX3 = (int) rowX4;
+			int lineX4 = (int) xPoint * 26;
 			// 正文1—学号 姓名
 			graphics2D.drawString("学号", rowX1, rowY);
 			graphics2D.drawString(model.getKinderId(), rowX2, rowY);
@@ -373,12 +368,13 @@ public class KinderPrintTool
 
 			// 签字(收款人)
 			rowY = rowY + 4f * height;
-			graphics2D.drawString("签字(收款人)", (float) centerIndex + 3, rowY);
-			graphics2D.drawString(model.getOperatorName(), (float) (centerIndex + xPoint * 13), rowY);
+			graphics2D.drawString("签字(收款人)", (float) xPoint * 17 + 3, rowY);
+			graphics2D.drawString(model.getOperatorName(), (float) xPoint * 23, rowY);
 			// 签字（收款人)下划线
 			rowY += 2;
-			graphics2D.drawLine((int) (centerIndex + 8 * xPoint), (int) rowY, lineX4, (int) rowY);
+			graphics2D.drawLine((int) xPoint * 20, (int) rowY, (int) xPoint + 260, (int) rowY);
 			return 0;
 		}
 	}
 }
+
