@@ -58,7 +58,7 @@ public class KinderLastFeeGroup extends AbstractGroup
 
 		TableViewerColumn tableViewerColumn = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tblclmnId = tableViewerColumn.getColumn();
-		tblclmnId.setWidth(100);
+		tblclmnId.setWidth(140);
 		tblclmnId.setText("学号");
 		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
 		{
@@ -86,7 +86,7 @@ public class KinderLastFeeGroup extends AbstractGroup
 
 		TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tableColumnDays = tableViewerColumn_2.getColumn();
-		tableColumnDays.setWidth(100);
+		tableColumnDays.setWidth(70);
 		tableColumnDays.setText("缴费天数");
 		tableViewerColumn_2.setLabelProvider(new ColumnLabelProvider()
 		{
@@ -142,7 +142,7 @@ public class KinderLastFeeGroup extends AbstractGroup
 
 		TableViewerColumn tableViewerColumn_6 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tableColumn_4 = tableViewerColumn_6.getColumn();
-		tableColumn_4.setWidth(100);
+		tableColumn_4.setWidth(140);
 		tableColumn_4.setText("操作");
 		tableViewerColumn_6.setLabelProvider(new ColumnLabelProvider()
 		{
@@ -216,7 +216,7 @@ public class KinderLastFeeGroup extends AbstractGroup
 
 				TableEditor editorEdit = new TableEditor(item.getParent());
 				editorEdit.grabHorizontal = false;
-				editorEdit.minimumWidth = 30;
+				editorEdit.minimumWidth = 40;
 				editorEdit.grabVertical = true;
 				editorEdit.horizontalAlignment = SWT.LEFT;
 				editorEdit.setEditor(btnEdit, item, cell.getColumnIndex());
@@ -234,7 +234,7 @@ public class KinderLastFeeGroup extends AbstractGroup
 					TableEditor editorUnCheck = new TableEditor(item.getParent());
 					editorUnCheck.grabHorizontal = false;
 					editorUnCheck.grabVertical = true;
-					editorUnCheck.minimumWidth = 40;
+					editorUnCheck.minimumWidth = 50;
 					editorUnCheck.horizontalAlignment = SWT.RIGHT;
 					editorUnCheck.setEditor(btnUnCheck, item, cell.getColumnIndex());
 					editorUnCheck.layout();

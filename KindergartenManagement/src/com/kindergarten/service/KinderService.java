@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -121,29 +122,62 @@ public class KinderService
 	}
 
 	/**
-	 * 改变学生缴费记录为作废
+	 * 改变学生缴费记录为作废，如果有抵扣预交费，则将预交费增加或新增一条预缴费记录
 	 * 
 	 * @throws SQLException
 	 * 
 	 * */
 	public void updateFeeStatusToInValid(int kinderFeePrimaryId) throws SQLException
 	{
-		StringBuilder sb = new StringBuilder();
-		sb.append(" update kinder_fee_history set feeVoucher_status = ? where id = ?");
 		Connection conn = DbUtils.getConnection();
 		PreparedStatement pstmt = null;
+		PreparedStatement pstmt1 = null;
+		ResultSet resultSet1 = null;
 		try
 		{
+			conn.setAutoCommit(false);
+			StringBuilder sb1 = new StringBuilder();
+			sb1.append("select kinder_id,deduction_prefee,operator_user_id from kinder_fee_history where id = ? ");
+			pstmt1 = conn.prepareStatement(sb1.toString());
+			pstmt1.setInt(1, kinderFeePrimaryId);
+			resultSet1 = pstmt1.executeQuery();
+			double deductionPrefee = 0.00d;
+			String kinderId = "";
+			String operUserId = "";
+			while (resultSet1.next())
+			{
+				kinderId = resultSet1.getString(1);
+				deductionPrefee = resultSet1.getDouble(2);
+				operUserId = resultSet1.getString(3);
+			}
+			KinderFeeInfo kinderFeeInfo = new KinderFeeInfo();
+			kinderFeeInfo.setKinderId(kinderId);
+			kinderFeeInfo.setPreFeeMoney(deductionPrefee);
+			kinderFeeInfo.setOperTime(new Date());
+			kinderFeeInfo.setFeeTime(new Date());
+			kinderFeeInfo.setFeeExpireTime(new Date());
+			User user = new User();
+			user.setUserId(operUserId);
+			kinderFeeInfo.setOperator(user);
+			kinderFeeInfo.setFeeReason("缴费作废抵扣预缴费充预缴费");
+			addPrefeeRecord(kinderFeeInfo, conn);// TODO 是否存在未用完的预缴费，存在则更新之
+			StringBuilder sb = new StringBuilder();
+			sb.append(" update kinder_fee_history set feeVoucher_status = ? where id = ?");
+
 			pstmt = conn.prepareStatement(sb.toString());
 			pstmt.setInt(1, CommonUtil.INVALID);
 			pstmt.setInt(2, kinderFeePrimaryId);
 			pstmt.executeUpdate();
+			conn.commit();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
 			throw e;
 		} finally
 		{
+			conn.setAutoCommit(true);
+			DbUtils.closeQuietly(resultSet1);
+			DbUtils.closeQuietly(pstmt1);
 			DbUtils.closeQuietly(pstmt);
 			DbUtils.closeQuietly(conn);
 		}
@@ -569,8 +603,10 @@ public class KinderService
 	public void addPrefeeRecord(KinderFeeInfo feeInfo, Connection connection) throws SQLException
 	{
 		StringBuilder sbFee = new StringBuilder();
+		String reasonStr = feeInfo.getFeeReason();
+		String reason = (reasonStr == null || "".equals(reasonStr)) ? "预缴费" : reasonStr;
 		sbFee.append(" insert into kinder_fee_history (kinder_id,fee_time,operator_user_id,operator_time,privilege_money,other_money,fee_event,pre_fee,fee_type) ");
-		sbFee.append(" values(?,?,?,?,?,?,'预缴费',?,?)");
+		sbFee.append(" values(?,?,?,?,?,?,'").append(reason).append("',?,?)");
 		PreparedStatement pstmtFee = null;
 		try
 		{

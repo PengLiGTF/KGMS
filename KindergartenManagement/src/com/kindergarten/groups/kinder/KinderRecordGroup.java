@@ -503,8 +503,15 @@ public class KinderRecordGroup extends AbstractGroup
 				String feeReason = "入园缴费";
 				if (kinderFeeInfo != null)
 				{
-					feeReason = "预缴费办理入学缴费";
+					if (!isEdit)
+					{
+						feeReason = "预缴费办理入学缴费";
+					} else
+					{
+						feeReason = "缴费修改";
+					}
 				}
+
 				feeInfo.setFeeReason(feeReason);
 				feeInfoList.add(feeInfo);
 				kinder.setKinderFeeInfoList(feeInfoList);

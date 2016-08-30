@@ -38,9 +38,9 @@ public class KinderFeeInfo
 	private int feeDays;
 	private Date feeTime;
 	private Date feeExpireTime;
-	private double privilegeMoney;
-	private double otherMoney;
-	private double actualMoney;
+	private double privilegeMoney = 0.00d;
+	private double otherMoney = 0.00d;
+	private double actualMoney = 0.00d;
 
 	private int kinderGradeId;
 	private int kinderClassId;

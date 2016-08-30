@@ -47,9 +47,9 @@ public class KinderPrintTool
 		pf.setOrientation(PageFormat.PORTRAIT);
 		// 通过Paper设置页面的空白边距和可打印区域。必须与实际打印纸张大小相符。
 		Paper p = new Paper();
-		p.setSize(280, 120);// 纸张大小
+		p.setSize(560, 180);// 纸张大小
 		// A4(595 X 842)设置打印区域，其实0，0应该是72，72，因为A4纸的默认X,Y边距是72
-		p.setImageableArea(10, 10, 280, 120);
+		p.setImageableArea(10, 10, 560, 180);
 		pf.setPaper(p);
 		// 把 PageFormat 和 Printable 添加到书中，组成一个页面
 		book.append(new PreFeePrinter(model), pf);
@@ -263,7 +263,7 @@ public class KinderPrintTool
 		@Override
 		public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException
 		{
-			String receiptTitle = "预缴费收款收据";
+			String receiptTitle = "缴费收款收据";
 			String checkId = model.getCheckId();
 			// 转换成Graphics2D
 			Graphics2D graphics2D = (Graphics2D) graphics;

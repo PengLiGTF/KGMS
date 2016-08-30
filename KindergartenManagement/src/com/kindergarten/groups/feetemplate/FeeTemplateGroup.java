@@ -80,7 +80,7 @@ public class FeeTemplateGroup extends AbstractGroup
 
 		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tblclmnTemplateName = tableViewerColumn_1.getColumn();
-		tblclmnTemplateName.setWidth(100);
+		tblclmnTemplateName.setWidth(150);
 		tblclmnTemplateName.setText("标准名称");
 
 		TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);

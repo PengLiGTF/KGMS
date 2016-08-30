@@ -239,7 +239,7 @@ public class MainFrame
 				{
 					// new KinderFeeRenewGroup(comp, SWT.NONE, userId);
 					new ExpireFeeKindersGroup(comp, SWT.NONE, userId, "");
-				} else if (funName.equals("系统管理"))
+				} else if (funName.equals("缴费反审核"))
 				{
 					new KinderLastFeeGroup(comp, SWT.NONE, userId, "");
 				} else if (funName.equals("学生缴费修改"))
@@ -303,7 +303,7 @@ public class MainFrame
 				{
 					new ExpireFeeKindersGroup(comp, SWT.NONE, userId, "");
 					// new KinderFeeRenewGroup(comp, SWT.NONE, userId);
-				} else if (funName.equals("系统管理"))
+				} else if (funName.equals("缴费反审核"))
 				{
 					new KinderLastFeeGroup(comp, SWT.NONE, userId, "");
 				} else if (funName.equals("学生缴费修改"))

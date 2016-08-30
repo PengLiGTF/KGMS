@@ -58,7 +58,7 @@ public class PreFeeKinderListGroup extends AbstractGroup
 
 		TableViewerColumn tableViewerColumn = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tableColumn = tableViewerColumn.getColumn();
-		tableColumn.setWidth(82);
+		tableColumn.setWidth(140);
 		tableColumn.setText("学号");
 		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
 		{
@@ -67,6 +67,20 @@ public class PreFeeKinderListGroup extends AbstractGroup
 			{
 				KinderFeeInfo feeInfo = (KinderFeeInfo) element;
 				return feeInfo.getKinderId();
+			}
+		});
+		
+		TableViewerColumn tableViewerColumnName = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
+		TableColumn tableColumn_2 = tableViewerColumnName.getColumn();
+		tableColumn_2.setText("姓名");
+		tableColumn_2.setWidth(47);
+		tableViewerColumnName.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				KinderFeeInfo feeInfo = (KinderFeeInfo) element;
+				return feeInfo.getKinderName();
 			}
 		});
 
