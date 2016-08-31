@@ -52,6 +52,7 @@ public class DbUtils
 		url = property.getProperty("Url");
 		userName = property.getProperty("UserName");
 		passWord = property.getProperty("PassWord");
+		passWord = Base64DecoderUtil.deCryptBase64(passWord);
 	}
 
 	public static Connection getConnection()
