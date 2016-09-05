@@ -180,7 +180,7 @@ public class ExpireFeeKindersGroup extends AbstractGroup
 
 		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tblclmnNewColumn_1 = tableViewerColumn_1.getColumn();
-		tblclmnNewColumn_1.setWidth(100);
+		tblclmnNewColumn_1.setWidth(120);
 		tblclmnNewColumn_1.setText("学号");
 		tableViewerColumn_1.setLabelProvider(new ColumnLabelProvider()
 		{
@@ -230,13 +230,13 @@ public class ExpireFeeKindersGroup extends AbstractGroup
 			public String getText(Object element)
 			{
 				FeeExpireKinder obj = (FeeExpireKinder) element;
-				return FormatData.dateToString(obj.getFeeTime());// TODO
+				return FormatData.dateToStringWithoutTime(obj.getFeeTime());// TODO
 			}
 		});
 
 		TableViewerColumn tableViewerColumn_7 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tblclmnNewColumn_7 = tableViewerColumn_7.getColumn();
-		tblclmnNewColumn_7.setWidth(100);
+		tblclmnNewColumn_7.setWidth(80);
 		tblclmnNewColumn_7.setText("缴费天数");
 		tableViewerColumn_7.setLabelProvider(new ColumnLabelProvider()
 		{
@@ -258,7 +258,7 @@ public class ExpireFeeKindersGroup extends AbstractGroup
 			public String getText(Object element)
 			{
 				FeeExpireKinder obj = (FeeExpireKinder) element;
-				return FormatData.dateToString(obj.getFeeExpireTime());// TODO
+				return FormatData.dateToStringWithoutTime(obj.getFeeExpireTime());// TODO
 			}
 		});
 		TableViewerColumn tableViewerColumn_5 = new TableViewerColumn(checkboxTableViewer, SWT.BUTTON1);

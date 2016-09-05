@@ -142,7 +142,7 @@ public class KinderRecordGroup extends AbstractGroup
 		labelPreFee.setVisible(!isEdit);
 		preFeeText.setVisible(!isEdit);
 		preFeeText.setText(String.valueOf(kinderFeeInfo.getPreFeeMoney()));
-		deductionPreFeeText.setEditable(false);
+		//deductionPreFeeText.setEditable(false);
 		deductionPreFeeText.setEnabled(true);
 		deductionPreFeeText.setText(String.valueOf(kinderFeeInfo.getPreFeeMoney()));
 		privilegeAmount.setText(String.valueOf(kinderFeeInfo.getPrivilegeMoney()));
@@ -694,7 +694,24 @@ public class KinderRecordGroup extends AbstractGroup
 				}
 				FeeTemplate feeTemplate = (FeeTemplate) SelectedFeeTemplate.getFirstElement();
 				double mount = feeTemplate.getFeeAmount();
-				double amount = mount / 30d * (Integer.parseInt(feeDays.getText()));
+				String feeDaysStr = feeDays.getText();
+				if(StringUtils.isBlank(feeDaysStr))
+				{
+					MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数不能为空");
+					return;
+				}
+				if(!CommonUtil.isDigital(feeDaysStr))
+				{
+					MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数必须为正确的数字格式");
+					return;
+				}
+				int day = Integer.parseInt(feeDaysStr);
+				if(day <= 0 || day % 30 != 0)
+				{
+					MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数必须为30的倍数");
+					return;
+				}
+				double amount = mount / 30d * (Integer.parseInt(feeDaysStr));
 				double privilegeValue = 0.00D;
 				String privelegeMoneyValueStr = privilegeAmount.getText();
 				if (!StringUtils.isBlank(privelegeMoneyValueStr))
@@ -733,13 +750,6 @@ public class KinderRecordGroup extends AbstractGroup
 					}
 
 					double deductionPreMoney = Double.valueOf(deductionPreFeeText.getText());
-					// if (deductionPreMoney > kinderFeeInfo.getPreFeeMoney())//
-					// 从预交费用中扣除
-					// {
-					// MessageBoxUtil.showWarnMessageBox(getShell(),
-					// "抵扣预缴费用多余预交费用了，谢谢！");
-					// return;
-					// }
 					amount -= deductionPreMoney;
 				}
 				actualFee.setText(String.valueOf(df.format(amount)) + "(" + NumberToCN.number2CNMontrayUnit(new BigDecimal(amount)) + ")");
@@ -775,8 +785,8 @@ public class KinderRecordGroup extends AbstractGroup
 
 		deductionPreFeeText = new Text(composite, SWT.BORDER);
 		deductionPreFeeText.setText("0.00");
-		deductionPreFeeText.setEditable(false);
-		deductionPreFeeText.setEnabled(false);
+		deductionPreFeeText.setEditable(true);
+		//deductionPreFeeText.setEnabled(false);
 		deductionPreFeeText.setBounds(359, 258, 174, 23);
 		comboViewerStatus.setContentProvider(new ComboArrayContentProvider(MyComboType.STATUS));
 		comboViewerStatus.setLabelProvider(new ComboILabelProvider());

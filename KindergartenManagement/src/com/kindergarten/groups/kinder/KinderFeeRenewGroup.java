@@ -552,6 +552,12 @@ public class KinderFeeRenewGroup extends AbstractGroup
 					MessageBoxUtil.showWarnMessageBox(getShell(), "续费天数只能是数字");
 					return;
 				}
+				int day = Integer.parseInt(renewDaysStr);
+				if(day <= 0 || day % 30 != 0)
+				{
+					MessageBoxUtil.showWarnMessageBox(getShell(), "续费天数只能为30的倍数");
+					return;
+				}
 				double amount = mount / 30d * (Integer.parseInt(renewDays.getText()));
 				double privilegeValue = 0.00D;
 				String privelegeMoneyValueStr = previlegeMoneyText.getText();

@@ -361,7 +361,7 @@ public class KinderService
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select * from (");
-		sb.append(" SELECT a.`kinder_id`,a.`kinder_name`,b.`fee_time`,b.`fee_days`,MAX(b.`fee_expire_time`) fee_expire_time,");
+		sb.append(" SELECT a.`kinder_id`,a.`kinder_name`,MAX(b.`fee_time`) fee_time,MAX(b.`fee_days`) fee_days,MAX(b.`fee_expire_time`) fee_expire_time,");
 		sb.append(" c.`grade_name`,d.`class_name` ");
 		sb.append(" FROM kinder a, kinder_fee_history b ,grade c, classes d ");
 		sb.append(" where ");

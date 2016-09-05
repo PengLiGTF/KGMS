@@ -12,6 +12,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -213,19 +215,17 @@ public class KinderLeaveGroup extends AbstractGroup
 
 		leaveStartTime = new DateTime(composite, SWT.BORDER);
 		leaveStartTime.setBounds(98, 122, 153, 24);
-
-		leaveStartTime.addFocusListener(new FocusListener()
+		leaveStartTime.addSelectionListener(new SelectionListener()
 		{
 			@Override
-			public void focusGained(FocusEvent e)
+			public void widgetSelected(SelectionEvent e)
 			{
-
+				setFeeExpireTimeAccordingStartTime(leaveEndTime, leaveStartTime);
 			}
 
 			@Override
-			public void focusLost(FocusEvent e)
+			public void widgetDefaultSelected(SelectionEvent e)
 			{
-				setFeeExpireTimeAccordingStartTime(leaveEndTime, leaveStartTime);
 			}
 		});
 
@@ -249,11 +249,11 @@ public class KinderLeaveGroup extends AbstractGroup
 		String value = leaveDayText.getText();
 		if (StringUtils.isBlank(value))
 		{
-			MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数不能为空");
+			MessageBoxUtil.showWarnMessageBox(getShell(), "请假天数不能为空");
 			return;
 		} else if (!CommonUtil.isDigital(value))
 		{
-			MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数只能输入数字且不能以0开头");
+			MessageBoxUtil.showWarnMessageBox(getShell(), "请假天数只能输入数字且不能以0开头");
 			return;
 		}
 		Calendar calendar = Calendar.getInstance();
