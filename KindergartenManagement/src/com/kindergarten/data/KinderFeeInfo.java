@@ -102,7 +102,7 @@ public class KinderFeeInfo
 		this.kinderClassId = kinderClassId;
 	}
 
-	private double preFeeMoney = 0.00;
+	private double preFeeMoney = 0.00D;
 
 	private char sex;
 

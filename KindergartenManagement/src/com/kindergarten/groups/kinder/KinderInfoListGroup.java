@@ -271,7 +271,7 @@ public class KinderInfoListGroup extends AbstractGroup
 
 		TableViewerColumn tableViewerColumn = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tblclmnNewColumn = tableViewerColumn.getColumn();
-		tblclmnNewColumn.setWidth(90);
+		tblclmnNewColumn.setWidth(140);
 		tblclmnNewColumn.setText("学号");
 		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
 		{

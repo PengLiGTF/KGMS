@@ -498,6 +498,7 @@ public class KinderRecordGroup extends AbstractGroup
 				feeInfo.setFeeType(feeType);
 				if (isEdit)
 				{
+					//设置表主键，好去后台修改对应的记录
 					feeInfo.setKinderFeeInfoId(kinderFeeInfo.getKinderFeeInfoId());
 				}
 				String feeReason = "入园缴费";
@@ -750,6 +751,12 @@ public class KinderRecordGroup extends AbstractGroup
 					}
 
 					double deductionPreMoney = Double.valueOf(deductionPreFeeText.getText());
+					double preFeeMoney = Double.valueOf(preFeeText.getText());
+					if(deductionPreMoney > preFeeMoney)
+					{
+						MessageBoxUtil.showWarnMessageBox(getShell(), "抵扣预交费用大于预交费用了");
+						return;
+					}
 					amount -= deductionPreMoney;
 				}
 				actualFee.setText(String.valueOf(df.format(amount)) + "(" + NumberToCN.number2CNMontrayUnit(new BigDecimal(amount)) + ")");

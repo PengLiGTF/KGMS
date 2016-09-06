@@ -12,6 +12,29 @@ public class FeeExpireKinder
 	private int feeDays;
 	private Date feeExpireTime;
 
+	private double preFeeMoney = 0.00D;
+	private double deductionPreFeeMoney = 0.00D;
+
+	public double getDeductionPreFeeMoney()
+	{
+		return deductionPreFeeMoney;
+	}
+
+	public void setDeductionPreFeeMoney(double deductionPreFeeMoney)
+	{
+		this.deductionPreFeeMoney = deductionPreFeeMoney;
+	}
+
+	public double getPreFeeMoney()
+	{
+		return preFeeMoney;
+	}
+
+	public void setPreFeeMoney(double preFeeMoney)
+	{
+		this.preFeeMoney = preFeeMoney;
+	}
+
 	public String getKinderId()
 	{
 		return kinderId;

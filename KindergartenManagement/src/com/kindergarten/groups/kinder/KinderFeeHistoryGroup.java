@@ -47,7 +47,7 @@ public class KinderFeeHistoryGroup extends AbstractGroup
 
 		TableViewerColumn tableViewerColumn = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tblclmnId = tableViewerColumn.getColumn();
-		tblclmnId.setWidth(100);
+		tblclmnId.setWidth(140);
 		tblclmnId.setText("学号");
 
 		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);

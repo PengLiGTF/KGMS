@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.paperclips.ImagePrint;
 
@@ -78,13 +80,33 @@ public class KinderFeeRenewGroup extends AbstractGroup
 	private Button btnPrint;
 
 	private DateTime operTime;
+	private Text preFeeText;
+	private Text deductionFeeText;
 
+	private KinderFeeInfo preFeeKinder;
+	
+	
 	public KinderFeeRenewGroup(Composite parent, int style, String userId, FeeExpireKinder feeExpireKinder)
 	{
 		this(parent, style, userId);
 		this.feeExpireKinder = feeExpireKinder;
 		kinderIdText.setText(feeExpireKinder.getKinderId());
 		kinderNameText.setText(feeExpireKinder.getKinderName());
+
+		KinderService kinderService = new KinderService();
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("kinderId", feeExpireKinder.getKinderId());
+		List<KinderFeeInfo> kinderFeeInfoList = kinderService.queryPreFeeKinderListByCondition(param);
+		if (kinderFeeInfoList != null && !kinderFeeInfoList.isEmpty())
+		{
+			double preFeeMondySum = 0.00D;
+			preFeeMondySum += kinderFeeInfoList.get(0).getPreFeeMoney();
+			feeExpireKinder.setPreFeeMoney(preFeeMondySum);
+			this.preFeeKinder = kinderFeeInfoList.get(0);
+		}
+		preFeeText.setText(String.valueOf(feeExpireKinder.getPreFeeMoney()));
+		deductionFeeText.setText(String.valueOf(feeExpireKinder.getPreFeeMoney()));
+		
 		List<User> userList = new UserService().queryUserByCondition(userId, "");
 		if (userList != null && userList.size() > 0)
 		{
@@ -99,7 +121,7 @@ public class KinderFeeRenewGroup extends AbstractGroup
 	{
 		super(parent, style, userId);
 		setText("续费管理");
-		composite.setLocation(10, 22);
+		composite.setLocation(10, 31);
 
 		Label label = new Label(composite, SWT.NONE);
 		label.setBounds(21, 29, 38, 17);
@@ -158,7 +180,7 @@ public class KinderFeeRenewGroup extends AbstractGroup
 
 		Group grpSss = new Group(composite, SWT.NONE);
 		grpSss.setText("最近缴费情况");
-		grpSss.setBounds(22, 68, 588, 81);
+		grpSss.setBounds(22, 68, 588, 72);
 
 		Label label_2 = new Label(grpSss, SWT.NONE);
 		label_2.setBounds(10, 37, 61, 17);
@@ -175,11 +197,11 @@ public class KinderFeeRenewGroup extends AbstractGroup
 		latestFeeEndTime.setBounds(415, 30, 88, 24);
 
 		Label label_4 = new Label(composite, SWT.NONE);
-		label_4.setBounds(21, 248, 61, 17);
+		label_4.setBounds(21, 230, 61, 17);
 		label_4.setText("续费天数");
 
 		renewDays = new Text(composite, SWT.BORDER);
-		renewDays.setBounds(88, 245, 162, 23);
+		renewDays.setBounds(88, 227, 162, 23);
 		renewDays.addModifyListener(new ModifyListener()
 		{
 			@Override
@@ -264,8 +286,8 @@ public class KinderFeeRenewGroup extends AbstractGroup
 					return;
 				}
 				int feeDayValue = Integer.parseInt(renewDays.getText());
-				
-				if(feeDayValue % 30 != 0)
+
+				if (feeDayValue % 30 != 0)
 				{
 					MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数必须为30的倍数");
 					return;
@@ -377,11 +399,17 @@ public class KinderFeeRenewGroup extends AbstractGroup
 				feeInfo.setActualMoney(actualMoney);
 				feeInfo.setFeeType(feeType);
 				feeInfo.setFeeReason("到期续费");
+				feeInfo.setDeductionPreFee(Double.valueOf(deductionFeeText.getText()));
 				feeInfoList.add(feeInfo);
 				kinder.setKinderFeeInfoList(feeInfoList);
 				try
 				{
-					new KinderService().addKinder(kinder);
+					if(preFeeKinder != null)
+					{
+						new KinderService().addKinderWithPreFee(kinder, preFeeKinder);
+					}else{
+					    new KinderService().addKinder(kinder);
+					}
 					MessageBoxUtil.showWarnMessageBox(getShell(), "学生续费成功");
 					btnSave.setEnabled(false);
 					btnPrint.setEnabled(true);
@@ -430,44 +458,44 @@ public class KinderFeeRenewGroup extends AbstractGroup
 		});
 
 		Label label_6 = new Label(composite, SWT.NONE);
-		label_6.setBounds(21, 209, 48, 17);
+		label_6.setBounds(21, 195, 48, 17);
 		label_6.setText("缴费标准");
 
 		comboViewerFeeTemplate = new ComboViewer(composite, SWT.NONE);
 		Combo comboFeeTemplate = comboViewerFeeTemplate.getCombo();
-		comboFeeTemplate.setBounds(92, 206, 162, 25);
+		comboFeeTemplate.setBounds(88, 192, 162, 25);
 		comboViewerFeeTemplate.setContentProvider(new ComboArrayContentProvider(MyComboType.FEE_TEMPLATE));
 		comboViewerFeeTemplate.setLabelProvider(new ComboILabelProvider());
 		comboViewerFeeTemplate.setInput(new Object[0]);
 
 		Label label_7 = new Label(composite, SWT.NONE);
-		label_7.setBounds(337, 209, 48, 17);
+		label_7.setBounds(327, 195, 48, 17);
 		label_7.setText("优惠金额");
 
 		previlegeMoneyText = new Text(composite, SWT.BORDER);
-		previlegeMoneyText.setBounds(408, 206, 202, 23);
+		previlegeMoneyText.setBounds(409, 192, 201, 23);
 
 		Label label_8 = new Label(composite, SWT.NONE);
-		label_8.setBounds(337, 251, 53, 17);
+		label_8.setBounds(327, 230, 53, 17);
 		label_8.setText("其他费用");
 
 		otherFeeText = new Text(composite, SWT.BORDER);
-		otherFeeText.setBounds(404, 248, 206, 23);
+		otherFeeText.setBounds(409, 227, 201, 23);
 
 		Label label_9 = new Label(composite, SWT.NONE);
 		label_9.setBounds(21, 329, 48, 17);
 		label_9.setText("续费金额");
 
 		actualFee = new Text(composite, SWT.BORDER);
-		actualFee.setBounds(92, 326, 259, 23);
+		actualFee.setBounds(88, 326, 426, 23);
 
 		Label label_10 = new Label(composite, SWT.NONE);
-		label_10.setBounds(31, 167, 38, 17);
+		label_10.setBounds(21, 162, 38, 17);
 		label_10.setText("年级");
 
 		comboViewerGrade = new ComboViewer(composite, SWT.NONE);
 		Combo comboGrade = comboViewerGrade.getCombo();
-		comboGrade.setBounds(92, 164, 162, 25);
+		comboGrade.setBounds(88, 159, 162, 25);
 		comboViewerGrade.setContentProvider(new ComboArrayContentProvider(MyComboType.GRADE));
 		comboViewerGrade.setLabelProvider(new ComboILabelProvider());
 		comboViewerGrade.setInput(new Object[0]);
@@ -489,12 +517,12 @@ public class KinderFeeRenewGroup extends AbstractGroup
 		});
 
 		Label label_11 = new Label(composite, SWT.NONE);
-		label_11.setBounds(337, 167, 38, 17);
+		label_11.setBounds(327, 162, 38, 17);
 		label_11.setText("班级");
 
 		comboViewerClass = new ComboViewer(composite, SWT.NONE);
 		Combo comboClass = comboViewerClass.getCombo();
-		comboClass.setBounds(404, 164, 206, 25);
+		comboClass.setBounds(409, 159, 201, 25);
 		comboViewerClass.setContentProvider(new ComboArrayContentProvider(MyComboType.CLASS));
 		comboViewerClass.setLabelProvider(new ComboILabelProvider());
 
@@ -514,7 +542,7 @@ public class KinderFeeRenewGroup extends AbstractGroup
 		renewStartTime.setBounds(107, 293, 147, 24);
 
 		Button button = new Button(composite, SWT.NONE);
-		button.setBounds(378, 322, 90, 27);
+		button.setBounds(520, 324, 90, 27);
 		button.setText("计算续费金额");
 		button.addMouseListener(new MouseListener()
 		{
@@ -553,7 +581,7 @@ public class KinderFeeRenewGroup extends AbstractGroup
 					return;
 				}
 				int day = Integer.parseInt(renewDaysStr);
-				if(day <= 0 || day % 30 != 0)
+				if (day <= 0 || day % 30 != 0)
 				{
 					MessageBoxUtil.showWarnMessageBox(getShell(), "续费天数只能为30的倍数");
 					return;
@@ -581,13 +609,29 @@ public class KinderFeeRenewGroup extends AbstractGroup
 					}
 					otherFeeMoney = Double.parseDouble(otherFeeMoneyValueStr);
 				}
-
+				//抵扣预交费用
+				String deductionFeeStr = deductionFeeText.getText();
+				double deductionPreFee = 0.00D;
+				if (!StringUtils.isBlank(deductionFeeStr))
+				{
+					if (!CommonUtil.isDigital(deductionFeeStr))
+					{
+						MessageBoxUtil.showWarnMessageBox(getShell(), "请输入正确的抵扣预交费用格式");
+						return;
+					}
+					deductionPreFee = Double.parseDouble(deductionFeeStr);
+				}
+				//比较抵扣费用和预交费用
+				double preFee = Double.parseDouble(preFeeText.getText());
+				if(deductionPreFee > preFee)
+				{
+					MessageBoxUtil.showWarnMessageBox(getShell(), "预交费用不够抵扣费用");
+					return;
+				}
 				amount -= privilegeValue;
+				amount -= deductionPreFee;
 				amount += otherFeeMoney;
-				// if (kinderFeeInfo != null)
-				// {
-				// amount -= Double.valueOf(kinderFeeInfo.getPreFeeMoney());
-				// }
+				
 				DecimalFormat df = new DecimalFormat("#.00");
 				actualFee.setText(String.valueOf(df.format(amount)) + "(" + NumberToCN.number2CNMontrayUnit(new BigDecimal(amount)) + ")");
 			}
@@ -601,7 +645,7 @@ public class KinderFeeRenewGroup extends AbstractGroup
 		operatorUserId.setBounds(88, 355, 162, 23);
 
 		Label label_15 = new Label(composite, SWT.NONE);
-		label_15.setBounds(307, 365, 61, 17);
+		label_15.setBounds(307, 358, 61, 17);
 		label_15.setText("操作时间");
 
 		operTime = new DateTime(composite, SWT.BORDER);
@@ -611,6 +655,21 @@ public class KinderFeeRenewGroup extends AbstractGroup
 		btnPrint.setBounds(280, 404, 80, 27);
 		btnPrint.setText("打印");
 		btnPrint.setEnabled(false);
+		
+		Label label_16 = new Label(composite, SWT.NONE);
+		label_16.setBounds(21, 263, 53, 17);
+		label_16.setText("预交费用");
+		
+		preFeeText = new Text(composite, SWT.BORDER);
+		preFeeText.setEditable(false);
+		preFeeText.setBounds(88, 256, 162, 23);
+		
+		Label label_17 = new Label(composite, SWT.NONE);
+		label_17.setBounds(319, 263, 61, 17);
+		label_17.setText("抵扣预交费");
+		
+		deductionFeeText = new Text(composite, SWT.BORDER);
+		deductionFeeText.setBounds(409, 261, 201, 23);
 		btnPrint.addMouseListener(new MouseListener()
 		{
 
@@ -629,10 +688,6 @@ public class KinderFeeRenewGroup extends AbstractGroup
 			@Override
 			public void mouseUp(MouseEvent e)
 			{
-				// StyledTextPrint doc = new StyledTextPrint();
-				// TextStyle normal = new TextStyle().font("Arial", 20,
-				// SWT.NORMAL);
-				// TextStyle bold = normal.fontStyle(SWT.BOLD);
 				Calendar cal = Calendar.getInstance();
 				cal.set(operTime.getYear(), operTime.getMonth(), operTime.getDay());
 				String checkId = CommonUtil.generateRenewFeeCheckId();
@@ -646,45 +701,13 @@ public class KinderFeeRenewGroup extends AbstractGroup
 				printerModel.setFeeDays(renewDays.getText() + "天");
 				printerModel.setPrivelegeMoney(previlegeMoneyText.getText());
 				printerModel.setOtherMoney(otherFeeText.getText());
-				// printerModel.setPreFeeMoney("");
-				// printerModel.setDeductionPreFeeMoney(deductionPreFeeText.getText());
+				printerModel.setPreFeeMoney(preFeeText.getText());
+				printerModel.setDeductionPreFeeMoney(deductionFeeText.getText());
 				printerModel.setAmountMoney(actualFee.getText());
 				printerModel.setOperatorName(operatorUserId.getText());
 				printerModel.setOperDate(cal.getTime());
+				//打印
 				KinderPrintTool.print(printerModel);
-				//
-				// doc.setStyle(normal).append(createSampleImage()).append("                       学生续费证明",
-				// bold).newline().newline()
-				// .append("-------------------------------------------------------------").newline().append("单据号：",
-				// bold)
-				// .append(checkId,
-				// normal.underline()).newline().append("学号：").append(kinderIdText.getText(),
-				// normal.underline()).newline().append("姓名：")
-				// .append(kinderNameText.getText(),
-				// normal.underline()).newline().append("年级：")
-				// .append(comboViewerGrade.getCombo().getText(),
-				// normal.underline()).newline().append("班级：")
-				// .append(comboViewerClass.getCombo().getText(),
-				// normal.underline()).newline().append("收费标准：")
-				// .append(comboViewerFeeTemplate.getCombo().getText(),
-				// normal.underline()).newline().append("收费时间段：")
-				// .append(renewDays.getText() + "/天",
-				// normal.underline()).newline().append("优惠额：")
-				// .append(previlegeMoneyText.getText(),
-				// normal.underline()).newline().append("其他费用(学杂和园备服费用)：")
-				// .append(otherFeeText.getText(),
-				// normal.underline()).newline().append("实收金额：").append(actualFee.getText(),
-				// normal.underline()).newline()
-				// .append("经办人：").append(operatorUserId.getText(),
-				// normal.underline()).newline().append("经办时间：")
-				// .append(CommonUtil.formatDateToString(cal.getTime(),
-				// CommonUtil.TIME_FORMAT_PATTERN), normal.underline());
-				// new KinderFeePrintDialog(getShell(), doc).open();
-			}
-
-			private ImagePrint createSampleImage()
-			{
-				return new ImagePrint(new ImageData(StudentFeePrintUtil.class.getClassLoader().getResourceAsStream("images/sp.png")), new Point(600, 600));
 			}
 		});
 

@@ -81,7 +81,11 @@ public class KinderService
 			preFeeKinder.setPreFeeMoney(preFeeLeft);
 			addKinderWithTransaction(kinder, connection);
 			// 重新插入一条预交费记录，更新预交费状态
-			addPrefeeRecord(preFeeKinder, connection);
+			if(preFeeLeft > 0)
+			{
+				preFeeKinder.setFeeReason("预交费抵扣后剩余");
+				addPrefeeRecord(preFeeKinder, connection);
+			}
 			connection.commit();
 			connection.setAutoCommit(true);
 		} finally
@@ -605,8 +609,8 @@ public class KinderService
 		StringBuilder sbFee = new StringBuilder();
 		String reasonStr = feeInfo.getFeeReason();
 		String reason = (reasonStr == null || "".equals(reasonStr)) ? "预缴费" : reasonStr;
-		sbFee.append(" insert into kinder_fee_history (kinder_id,fee_time,operator_user_id,operator_time,privilege_money,other_money,fee_event,pre_fee,fee_type) ");
-		sbFee.append(" values(?,?,?,?,?,?,'").append(reason).append("',?,?)");
+		sbFee.append(" insert into kinder_fee_history (kinder_id,fee_time,operator_user_id,operator_time,privilege_money,other_money,fee_event,pre_fee,fee_type,fee_expire_time) ");
+		sbFee.append(" values(?,?,?,?,?,?,'").append(reason).append("',?,?,?)");
 		PreparedStatement pstmtFee = null;
 		try
 		{
@@ -619,6 +623,7 @@ public class KinderService
 			pstmtFee.setDouble(6, feeInfo.getOtherMoney());
 			pstmtFee.setDouble(7, feeInfo.getPreFeeMoney());
 			pstmtFee.setString(8, FeeTypeConstant.PRE_FEE);
+			pstmtFee.setDate(9, new java.sql.Date(feeInfo.getFeeExpireTime() == null ? new Date().getTime() : feeInfo.getFeeExpireTime().getTime()));
 			pstmtFee.execute();
 		} catch (SQLException e)
 		{
@@ -646,8 +651,8 @@ public class KinderService
 		sb.append("insert into kinder(kinder_id,kinder_name,kinder_sex) ");
 		sb.append(" values(?,?,?)");
 		StringBuilder sbFee = new StringBuilder();
-		sbFee.append(" insert into kinder_fee_history (kinder_id,fee_time,operator_user_id,operator_time,privilege_money,other_money,fee_event,pre_fee,fee_type) ");
-		sbFee.append(" values(?,?,?,?,?,?,'预缴费',?,?)");
+		sbFee.append(" insert into kinder_fee_history (kinder_id,fee_time,operator_user_id,operator_time,privilege_money,other_money,fee_event,pre_fee,fee_type,fee_expire_time) ");
+		sbFee.append(" values(?,?,?,?,?,?,'预缴费',?,?,?)");
 		Connection connection = DbUtils.getConnection();
 		PreparedStatement pstmt = null;
 		PreparedStatement pstmtFee = null;
@@ -672,6 +677,7 @@ public class KinderService
 				pstmtFee.setDouble(6, feeInfo.getOtherMoney());
 				pstmtFee.setDouble(7, feeInfo.getPreFeeMoney());
 				pstmtFee.setString(8, feeInfo.getFeeType());
+				pstmtFee.setDate(9, new java.sql.Date(feeInfo.getFeeExpireTime().getTime()));
 				pstmtFee.execute();
 				connection.commit();
 				connection.setAutoCommit(true);
@@ -776,7 +782,6 @@ public class KinderService
 	{
 		StringBuilder sb1 = new StringBuilder();
 		sb1.append("delete from kinder where kinder_id = ?");
-
 		StringBuilder sb = new StringBuilder();
 		sb.append("insert into kinder(kinder_id,kinder_name,kinder_sex,kinder_grade_id,kinder_class_id,kinder_status_Code) ");
 		sb.append(" values(?,?,?,?,?,?)");
