@@ -542,6 +542,13 @@ public class KinderService
 				temp.setKinderClassId(resultSet.getInt("kinder_class_id"));
 				temp.setKinderGradeId(resultSet.getInt("kinder_grade_id"));
 				temp.setSex(resultSet.getString("kinder_sex").charAt(0));
+				
+				temp.setPreFeeMoney(resultSet.getDouble("pre_fee"));
+				temp.setPrivilegeMoney(resultSet.getDouble("privilege_money"));
+				temp.setOtherMoney(resultSet.getDouble("other_money"));
+				temp.setActualMoney(resultSet.getDouble("actual_money"));
+				temp.setDeductionPreFee(resultSet.getDouble("deduction_prefee"));
+				
 				User user = new User();
 				user.setUserId(resultSet.getString("operator_user_id"));
 				temp.setOperator(user);

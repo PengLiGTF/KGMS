@@ -2,7 +2,9 @@ package com.kindergarten.groups.kinder;
 
 import java.util.List;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -49,31 +51,128 @@ public class KinderFeeHistoryGroup extends AbstractGroup
 		TableColumn tblclmnId = tableViewerColumn.getColumn();
 		tblclmnId.setWidth(140);
 		tblclmnId.setText("学号");
+		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				KinderFeeInfo obj = (KinderFeeInfo) element;
+				return obj.getKinderId();
+			}
+		});
 
 		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tblclmnName = tableViewerColumn_1.getColumn();
 		tblclmnName.setWidth(100);
 		tblclmnName.setText("姓名");
+		tableViewerColumn_1.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				KinderFeeInfo obj = (KinderFeeInfo) element;
+				return obj.getKinderName();
+			}
+		});
 
 		TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tableColumnDays = tableViewerColumn_2.getColumn();
-		tableColumnDays.setWidth(100);
+		tableColumnDays.setWidth(80);
 		tableColumnDays.setText("缴费天数");
+		tableViewerColumn_2.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				KinderFeeInfo obj = (KinderFeeInfo) element;
+				return String.valueOf(obj.getFeeDays());
+			}
+		});
+		
+
+		TableViewerColumn tableViewerColumn_actualFee = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
+		TableColumn tableColumnActualFee = tableViewerColumn_actualFee.getColumn();
+		tableColumnActualFee.setWidth(80);
+		tableColumnActualFee.setText("实缴费用");
+		tableViewerColumn_actualFee.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				KinderFeeInfo obj = (KinderFeeInfo) element;
+				return String.valueOf(obj.getActualMoney());
+			}
+		});
+		
+		TableViewerColumn tableViewerColumn_PreFee = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
+		TableColumn tableColumnPreFee = tableViewerColumn_PreFee.getColumn();
+		tableColumnPreFee.setWidth(80);
+		tableColumnPreFee.setText("预缴费用");
+		tableViewerColumn_PreFee.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				KinderFeeInfo obj = (KinderFeeInfo) element;
+				return String.valueOf(obj.getPreFeeMoney());
+			}
+		});
+		
+		TableViewerColumn tableViewerColumn_deductionFee = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
+		TableColumn tableColumnDeductionFee = tableViewerColumn_deductionFee.getColumn();
+		tableColumnDeductionFee.setWidth(80);
+		tableColumnDeductionFee.setText("抵扣预缴费用");
+		tableViewerColumn_deductionFee.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				KinderFeeInfo obj = (KinderFeeInfo) element;
+				return String.valueOf(obj.getDeductionPreFee());
+			}
+		});
 
 		TableViewerColumn tableViewerColumn_3 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tableColumnFeeStart = tableViewerColumn_3.getColumn();
-		tableColumnFeeStart.setWidth(100);
+		tableColumnFeeStart.setWidth(80);
 		tableColumnFeeStart.setText("缴费开始日期");
+		tableViewerColumn_3.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				KinderFeeInfo obj = (KinderFeeInfo) element;
+				return CommonUtil.formatDateToString(obj.getFeeTime(), CommonUtil.TIME_FORMAT_PATTERN);
+			}
+		});
 
 		TableViewerColumn tableViewerColumn_4 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tableColumnFeeExpire = tableViewerColumn_4.getColumn();
-		tableColumnFeeExpire.setWidth(100);
+		tableColumnFeeExpire.setWidth(80);
 		tableColumnFeeExpire.setText("费用到期日");
+		tableViewerColumn_4.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				KinderFeeInfo obj = (KinderFeeInfo) element;
+				return CommonUtil.formatDateToString(obj.getFeeExpireTime(), CommonUtil.TIME_FORMAT_PATTERN);
+			}
+		});
 
 		TableViewerColumn tableViewerColumn_5 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tableColumnFeeChangeReason = tableViewerColumn_5.getColumn();
 		tableColumnFeeChangeReason.setWidth(100);
 		tableColumnFeeChangeReason.setText("缴费变更原因");
+		tableViewerColumn_5.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				KinderFeeInfo obj = (KinderFeeInfo) element;
+				return obj.getFeeEvent();
+			}
+		});
 
 		Button btnClose = new Button(composite, SWT.NONE);
 		btnClose.setBounds(557, 403, 80, 27);
@@ -125,8 +224,15 @@ public class KinderFeeHistoryGroup extends AbstractGroup
 			}
 		});
 
-		checkboxTableViewer.setContentProvider(new MyTableStructedProvider());
-		checkboxTableViewer.setLabelProvider(new MyITableLabelProvider());
+		checkboxTableViewer.setContentProvider(new ArrayContentProvider()
+		{
+			@Override
+			public Object[] getElements(Object inputElement)
+			{
+				KinderFeeInfo[] arr = (KinderFeeInfo[]) inputElement;
+				return arr;
+			}
+		});
 		KinderService feeService = new KinderService();
 		List<KinderFeeInfo> feeHisList = feeService.queryFeeHistory(kinderId);
 		checkboxTableViewer.setInput(feeHisList.toArray(new KinderFeeInfo[0]));
@@ -137,80 +243,4 @@ public class KinderFeeHistoryGroup extends AbstractGroup
 		super(parent, none, userId);
 	}
 
-	static class MyITableLabelProvider implements ITableLabelProvider
-	{
-		@Override
-		public void addListener(ILabelProviderListener listener)
-		{
-		}
-
-		@Override
-		public void dispose()
-		{
-		}
-
-		@Override
-		public boolean isLabelProperty(Object element, String property)
-		{
-			return false;
-		}
-
-		@Override
-		public void removeListener(ILabelProviderListener listener)
-		{
-		}
-
-		@Override
-		public Image getColumnImage(Object element, int columnIndex)
-		{
-			return null;
-		}
-
-		@Override
-		public String getColumnText(Object element, int columnIndex)
-		{
-			if (element != null)
-			{
-				KinderFeeInfo cm = (KinderFeeInfo) element;
-				switch (columnIndex)
-				{
-				case 0:
-					return String.valueOf(cm.getKinderId());
-				case 1:
-					return cm.getKinderName();
-				case 2:
-					return String.valueOf(cm.getFeeDays());
-				case 3:
-					return CommonUtil.formatDateToString(cm.getFeeTime(), CommonUtil.TIME_FORMAT_PATTERN);
-				case 4:
-					return CommonUtil.formatDateToString(cm.getFeeExpireTime(), CommonUtil.TIME_FORMAT_PATTERN);
-				case 5:
-					return cm.getFeeEvent();
-				}
-			}
-			return null;
-		}
-	}
-
-	static class MyTableStructedProvider implements IStructuredContentProvider
-	{
-		@Override
-		public void dispose()
-		{
-
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-		{
-
-		}
-
-		@Override
-		public Object[] getElements(Object inputElement)
-		{
-			KinderFeeInfo[] arr = (KinderFeeInfo[]) inputElement;
-			return arr;
-		}
-	}
 }
