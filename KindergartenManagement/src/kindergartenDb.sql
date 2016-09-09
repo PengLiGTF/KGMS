@@ -97,18 +97,18 @@ CREATE TABLE `kinder_fee_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `fee_template_id` int(11) DEFAULT NULL,
   `kinder_id` varchar(100) DEFAULT NULL,
-  `fee_days` int(11) DEFAULT NULL,
+  `fee_days` int(11) DEFAULT 0,
   `fee_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `fee_expire_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `operator_user_id` varchar(100) DEFAULT NULL,
   `operator_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `privilege_money` int(11) DEFAULT NULL,
-  `other_money` int(11) DEFAULT NULL,
-  `actual_money` int(11) DEFAULT NULL,
-  `pre_fee` int(11) DEFAULT NULL,
+  `privilege_money` int(11) DEFAULT 0,
+  `other_money` int(11) DEFAULT 0,
+  `actual_money` int(11) DEFAULT 0,
+  `pre_fee` int(11) DEFAULT 0,
   `feeVoucher_status` int(11) DEFAULT 101,
   `fee_event` varchar(20) DEFAULT NULL,
-  `deduction_prefee` int(11) DEFAULT NULL,
+  `deduction_prefee` int(11) DEFAULT 0,
   `fee_type` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
@@ -243,7 +243,7 @@ CREATE TABLE `sequence` (
 
 /*Data for the table `sequence` */
 
-insert  into `sequence`(`name`,`current_value`,`increment`) values ('kinderFeeIdSeq',100000000,1),('kinderIdSeq',38,1),('kinderPreFeeIdSeq',200000000,1),('kinderRenewFeeIdSeq',300000000,1);
+insert  into `sequence`(`name`,`current_value`,`increment`) values ('kinderFeeIdSeq',100000000,1),('kinderIdSeq',1,1),('kinderPreFeeIdSeq',200000000,1),('kinderRenewFeeIdSeq',300000000,1);
 
 /*Table structure for table `test` */
 

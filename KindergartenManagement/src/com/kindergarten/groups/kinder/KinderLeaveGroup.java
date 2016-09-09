@@ -203,7 +203,7 @@ public class KinderLeaveGroup extends AbstractGroup
 				{
 					childs[0].dispose();
 				}
-				new IndexGroup(parent, SWT.NONE, userId);
+				new KinderLeaveListGroup(parent, SWT.NONE, userId);
 			}
 		});
 

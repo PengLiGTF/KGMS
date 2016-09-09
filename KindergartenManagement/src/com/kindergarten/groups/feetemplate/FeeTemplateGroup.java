@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -77,18 +79,65 @@ public class FeeTemplateGroup extends AbstractGroup
 		TableColumn id = tableViewerColumn.getColumn();
 		id.setWidth(100);
 		id.setText("序号");
+		tableViewerColumn.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				FeeTemplate feeTemplate = (FeeTemplate) element;
+				return String.valueOf(feeTemplate.getId());
+			}
+		});
 
 		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tblclmnTemplateName = tableViewerColumn_1.getColumn();
 		tblclmnTemplateName.setWidth(150);
 		tblclmnTemplateName.setText("标准名称");
+		tableViewerColumn_1.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				FeeTemplate feeTemplate = (FeeTemplate) element;
+				return feeTemplate.getFeeTemplateName();
+			}
+		});
+
 
 		TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(checkboxTableViewer, SWT.NONE);
 		TableColumn tblclmnAmount = tableViewerColumn_2.getColumn();
 		tblclmnAmount.setWidth(100);
 		tblclmnAmount.setText("标准额度");
-		checkboxTableViewer.setContentProvider(new MyTableStructedProvider());
-		checkboxTableViewer.setLabelProvider(new MyITableLabelProvider());
+		tableViewerColumn_2.setLabelProvider(new ColumnLabelProvider()
+		{
+			@Override
+			public String getText(Object element)
+			{
+				FeeTemplate feeTemplate = (FeeTemplate) element;
+				return String.valueOf(feeTemplate.getFeeAmount());
+			}
+		});
+		
+		
+		checkboxTableViewer.setContentProvider(new ArrayContentProvider()
+		{
+			@Override
+			public Object[] getElements(Object inputElement)
+			{
+				@SuppressWarnings("unchecked")
+				Map<String, String> paramMap = (Map<String, String>) inputElement;
+				String name = paramMap.get("feeTemplateName");
+				BigDecimal bigData = null;
+				String amountStr = paramMap.get("feeAmount");
+				if (!StringUtils.isBlank(amountStr))
+				{
+					bigData = new BigDecimal(amountStr);
+				}
+				FeeTemplateService service = new FeeTemplateService();
+				return service.queryByCondition(name, bigData).toArray(new FeeTemplate[0]);
+			}
+		});
+		// checkboxTableViewer.setLabelProvider(new MyITableLabelProvider());
 		checkboxTableViewer.setInput(new HashMap<String, String>());
 
 		Label label_3 = new Label(composite, SWT.SEPARATOR | SWT.VERTICAL);
@@ -209,83 +258,4 @@ public class FeeTemplateGroup extends AbstractGroup
 			}
 		}
 	}
-
-	static class MyITableLabelProvider implements ITableLabelProvider
-	{
-		@Override
-		public void addListener(ILabelProviderListener listener)
-		{
-		}
-
-		@Override
-		public void dispose()
-		{
-		}
-
-		@Override
-		public boolean isLabelProperty(Object element, String property)
-		{
-			return false;
-		}
-
-		@Override
-		public void removeListener(ILabelProviderListener listener)
-		{
-		}
-
-		@Override
-		public Image getColumnImage(Object element, int columnIndex)
-		{
-			return null;
-		}
-
-		@Override
-		public String getColumnText(Object element, int columnIndex)
-		{
-			if (element != null)
-			{
-				FeeTemplate feeTemplate = (FeeTemplate) element;
-				switch (columnIndex)
-				{
-				case 0:
-					return String.valueOf(feeTemplate.getId());
-				case 1:
-					return feeTemplate.getFeeTemplateName();
-				case 2:
-					return String.valueOf(feeTemplate.getFeeAmount());
-				}
-			}
-			return null;
-		}
-	}
-
-	static class MyTableStructedProvider implements IStructuredContentProvider
-	{
-		@Override
-		public void dispose()
-		{
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
-		{
-		}
-
-		@Override
-		public Object[] getElements(Object inputElement)
-		{
-			@SuppressWarnings("unchecked")
-			Map<String, String> paramMap = (Map<String, String>) inputElement;
-			String name = paramMap.get("feeTemplateName");
-			BigDecimal bigData = null;
-			String amountStr = paramMap.get("feeAmount");
-			if (!StringUtils.isBlank(amountStr))
-			{
-				bigData = new BigDecimal(amountStr);
-			}
-			FeeTemplateService service = new FeeTemplateService();
-			return service.queryByCondition(name, bigData).toArray(new FeeTemplate[0]);
-		}
-	}
-
 }
