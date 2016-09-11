@@ -209,18 +209,31 @@ public class PreFeeKindersRecordGroup extends AbstractGroup
 					return;
 				}
 				String privilegeMoney = privilegeFeeText.getText();
+				if(StringUtils.isBlank(privilegeMoney))
+				{
+					privilegeMoney = "0.00";
+				}
 				if (!CommonUtil.isDigital(privilegeMoney))
 				{
 					MessageBoxUtil.showWarnMessageBox(getShell(), "优惠金额必须是数字");
 					return;
 				}
 				String otherMoney = otherFeeText.getText();
+				if(StringUtils.isBlank(otherMoney))
+				{
+					otherMoney = "0.00";
+				}
 				if (!CommonUtil.isDigital(otherMoney))
 				{
 					MessageBoxUtil.showWarnMessageBox(getShell(), "其他费用必须是数字");
 					return;
 				}
 				String preFeeMoney = actualFeeText.getText();
+				if(StringUtils.isBlank(preFeeMoney))
+				{
+					MessageBoxUtil.showWarnMessageBox(getShell(), "请输入预缴费金额");
+					return;
+				}
 				if (!CommonUtil.isDigital(preFeeMoney))
 				{
 					MessageBoxUtil.showWarnMessageBox(getShell(), "预缴费用必须是数字");
@@ -350,9 +363,13 @@ public class PreFeeKindersRecordGroup extends AbstractGroup
 //				printerModel.setClassName(comboViewerClass.getCombo().getText());
 //				printerModel.setFeeTemplate(comboViewerFeeTemplate.getCombo().getText());
 //				printerModel.setFeeDays(feeDays.getText() + "天");
-				printerModel.setPrivelegeMoney(privilegeFeeText.getText());
-				printerModel.setOtherMoney(otherFeeText.getText());
-				printerModel.setPreFeeMoney(NumberToCN.number2CNMontrayUnit(new BigDecimal(preFeeMoney)));
+				String priviMoney = privilegeFeeText.getText();
+				priviMoney = (priviMoney == null || "".equals(priviMoney)) ? "0.00" : priviMoney;
+				printerModel.setPrivelegeMoney(CommonUtil.formatMoneyInChinese(priviMoney));
+				String otherMoney = otherFeeText.getText();
+				otherMoney = (otherMoney == null || "".equals(otherMoney)) ? "0.00" : otherMoney;
+				printerModel.setOtherMoney(CommonUtil.formatMoneyInChinese(otherMoney));
+				printerModel.setPreFeeMoney(CommonUtil.formatMoneyInChinese(preFeeMoney));
 //				printerModel.setDeductionPreFeeMoney(deductionPreFeeText.getText());
 //				printerModel.setAmountMoney(actualFee.getText());
 				printerModel.setOperatorName(operatorText.getText());

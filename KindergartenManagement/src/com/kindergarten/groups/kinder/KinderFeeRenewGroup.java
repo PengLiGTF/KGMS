@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.paperclips.ImagePrint;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -21,8 +19,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -54,7 +50,6 @@ import com.kindergarten.util.MyComboType;
 import com.kindergarten.util.NumberToCN;
 import com.kindergarten.util.print.KinderPrintTool;
 import com.kindergarten.util.print.KinderPrinterModel;
-import com.kindergarten.util.print.StudentFeePrintUtil;
 
 public class KinderFeeRenewGroup extends AbstractGroup
 {
@@ -699,11 +694,21 @@ public class KinderFeeRenewGroup extends AbstractGroup
 				printerModel.setClassName(comboViewerClass.getCombo().getText());
 				printerModel.setFeeTemplate(comboViewerFeeTemplate.getCombo().getText());
 				printerModel.setFeeDays(renewDays.getText() + "天");
-				printerModel.setPrivelegeMoney(previlegeMoneyText.getText());
-				printerModel.setOtherMoney(otherFeeText.getText());
-				printerModel.setPreFeeMoney(preFeeText.getText());
-				printerModel.setDeductionPreFeeMoney(deductionFeeText.getText());
-				printerModel.setAmountMoney(actualFee.getText());
+				String priviMoney = previlegeMoneyText.getText();
+				priviMoney = (priviMoney == null || "".equals(priviMoney)) ? "0.00" : priviMoney;
+				printerModel.setPrivelegeMoney(CommonUtil.formatMoneyInChinese(priviMoney));
+				String otherMoney = otherFeeText.getText();
+				otherMoney = (otherMoney == null || "".equals(otherMoney)) ? "0.00" : otherMoney;
+				printerModel.setOtherMoney(CommonUtil.formatMoneyInChinese(otherMoney));
+				String preMoney = preFeeText.getText();
+				preMoney = (preMoney == null || "".equals(preMoney)) ? "0.00" : preMoney;
+				printerModel.setPreFeeMoney(CommonUtil.formatMoneyInChinese(preMoney));
+				String deductionMoney = deductionFeeText.getText();
+				deductionMoney = (deductionMoney == null || "".equals(deductionMoney)) ? "0.00" : deductionMoney;
+				printerModel.setDeductionPreFeeMoney(CommonUtil.formatMoneyInChinese(deductionMoney));
+				String actualMoney = actualFee.getText();
+				actualMoney = (actualMoney == null || "".equals(actualMoney)) ? "0.00" : actualMoney;
+				printerModel.setAmountMoney(actualMoney);
 				printerModel.setOperatorName(operatorUserId.getText());
 				printerModel.setOperDate(cal.getTime());
 				//打印

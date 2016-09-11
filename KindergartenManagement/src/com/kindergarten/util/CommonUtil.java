@@ -1,5 +1,6 @@
 package com.kindergarten.util;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -67,6 +68,20 @@ public class CommonUtil
 		return null;
 	}
 
+	/**
+	 * 金额显示成 小写(大写)的形式
+	 * */
+	public static String formatMoneyInChinese(String money)
+	{
+		return money + "(" + NumberToCN.number2CNMontrayUnit(new BigDecimal(money)) + ")";
+	}
+	
+	public static String formatMoneyInChinese(Double money)
+	{
+		return money + "(" + NumberToCN.number2CNMontrayUnit(new BigDecimal(money)) + ")";
+	}
+	
+	
 	/**
 	 * 学生入园缴费序号
 	 * */
@@ -277,7 +292,10 @@ public class CommonUtil
 
 	public static void main(String[] args)
 	{
-		System.out.println(isOnlyDigital("0.0"));
+		System.out.println(formatMoneyInChinese(0.00));
+		
+		
+		
 
 		// System.out.println(formatDateToString(new Date(),
 		// TIME_FORMAT_PATTERN));
@@ -288,5 +306,7 @@ public class CommonUtil
 		// System.out.println(generateFeeCheckId());
 
 	}
+
+
 
 }

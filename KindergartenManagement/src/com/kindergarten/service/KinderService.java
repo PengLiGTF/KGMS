@@ -84,6 +84,9 @@ public class KinderService
 			if(preFeeLeft > 0)
 			{
 				preFeeKinder.setFeeReason("预交费抵扣后剩余");
+				//剩余预缴费对应的优惠额和其他费用都清空
+				preFeeKinder.setPrivilegeMoney(0.00D);
+				preFeeKinder.setOtherMoney(0.00D);
 				addPrefeeRecord(preFeeKinder, connection);
 			}
 			connection.commit();

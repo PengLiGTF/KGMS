@@ -594,11 +594,21 @@ public class KinderRecordGroup extends AbstractGroup
 				printerModel.setClassName(comboViewerClass.getCombo().getText());
 				printerModel.setFeeTemplate(comboViewerFeeTemplate.getCombo().getText());
 				printerModel.setFeeDays(feeDays.getText() + "天");
-				printerModel.setPrivelegeMoney(privilegeAmount.getText());
-				printerModel.setOtherMoney(otherFeeText.getText());
-				printerModel.setPreFeeMoney(preFeeText.getText());
-				printerModel.setDeductionPreFeeMoney(deductionPreFeeText.getText());
-				printerModel.setAmountMoney(actualFee.getText());
+				String priviMoney = privilegeAmount.getText();
+				priviMoney = (priviMoney == null || "".equals(priviMoney)) ? "0.00" : priviMoney;
+				printerModel.setPrivelegeMoney(CommonUtil.formatMoneyInChinese(priviMoney));
+				String otherMoney = otherFeeText.getText();
+				otherMoney = (otherMoney == null || "".equals(otherMoney)) ? "0.00" : otherMoney;
+				printerModel.setOtherMoney(CommonUtil.formatMoneyInChinese(otherMoney));
+				String preFeeMoney = preFeeText.getText();
+				preFeeMoney = (preFeeMoney == null || "".equals(preFeeMoney)) ? "0.00" : preFeeMoney;
+				printerModel.setPreFeeMoney(CommonUtil.formatMoneyInChinese(preFeeMoney));
+				String deductionMoney = deductionPreFeeText.getText();
+				deductionMoney = (deductionMoney == null || "".equals(deductionMoney)) ? "0.00" : deductionMoney;
+				printerModel.setDeductionPreFeeMoney(CommonUtil.formatMoneyInChinese(deductionMoney));
+				String actualMoney = actualFee.getText();
+				actualMoney = (actualMoney == null || "".equals(actualMoney)) ? "0.00" : actualMoney;
+				printerModel.setAmountMoney(actualMoney);
 				printerModel.setOperatorName(operatorUserId.getText());
 				printerModel.setOperDate(cal.getTime());
 				KinderPrintTool.print(printerModel);
@@ -640,7 +650,7 @@ public class KinderRecordGroup extends AbstractGroup
 
 		kinderId = new Text(composite, SWT.BORDER);
 		kinderId.setBounds(85, 69, 333, 23);
-		kinderId.setEditable(false);
+		//kinderId.setEditable(false);
 
 		btnGenerateId = new Button(composite, SWT.NONE);
 		btnGenerateId.setBounds(453, 69, 80, 27);
@@ -739,26 +749,22 @@ public class KinderRecordGroup extends AbstractGroup
 				amount -= privilegeValue;
 				amount += otherFeeMoney;
 				DecimalFormat df = new DecimalFormat("#.00");
-				if (kinderFeeInfo != null)
+				if (StringUtils.isBlank(deductionPreFeeText.getText()))
 				{
-					if (StringUtils.isBlank(deductionPreFeeText.getText()))
-					{
-						deductionPreFeeText.setText("0.00");
-					} else if (!CommonUtil.isDigital(deductionPreFeeText.getText()))
-					{
-						MessageBoxUtil.showWarnMessageBox(getShell(), "费用输入必须为数字");
-						return;
-					}
-
-					double deductionPreMoney = Double.valueOf(deductionPreFeeText.getText());
-					double preFeeMoney = Double.valueOf(preFeeText.getText());
-					if(deductionPreMoney > preFeeMoney)
-					{
-						MessageBoxUtil.showWarnMessageBox(getShell(), "抵扣预交费用大于预交费用了");
-						return;
-					}
-					amount -= deductionPreMoney;
+					deductionPreFeeText.setText("0.00");
+				} else if (!CommonUtil.isDigital(deductionPreFeeText.getText()))
+				{
+					MessageBoxUtil.showWarnMessageBox(getShell(), "费用输入必须为数字");
+					return;
 				}
+				double deductionPreMoney = Double.valueOf(deductionPreFeeText.getText());
+				double preFeeMoney = Double.valueOf(preFeeText.getText());
+				if(deductionPreMoney > preFeeMoney)
+				{
+					MessageBoxUtil.showWarnMessageBox(getShell(), "抵扣预交费用大于预交费用了,请确认预缴费足够");
+					return;
+				}
+				amount -= deductionPreMoney;
 				actualFee.setText(String.valueOf(df.format(amount)) + "(" + NumberToCN.number2CNMontrayUnit(new BigDecimal(amount)) + ")");
 			}
 		});

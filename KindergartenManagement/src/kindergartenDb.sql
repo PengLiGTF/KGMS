@@ -26,7 +26,7 @@ CREATE TABLE `classes` (
   `class_name` varchar(100) DEFAULT NULL,
   `grade_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`class_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 /*Data for the table `classes` */
 
@@ -39,11 +39,7 @@ CREATE TABLE `fee_template` (
   `fee_template_name` varchar(200) DEFAULT NULL,
   `fee_amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-
-/*Data for the table `fee_template` */
-
-insert  into `fee_template`(`id`,`fee_template_name`,`fee_amount`) values (4,'一年级',1800);
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `fun_operation` */
 
@@ -68,7 +64,7 @@ CREATE TABLE `grade` (
   `grade_name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`grade_id`),
   UNIQUE KEY `grade_name` (`grade_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 /*Data for the table `grade` */
 
@@ -85,7 +81,7 @@ CREATE TABLE `kinder` (
   `kinder_status_Code` varchar(50) DEFAULT NULL,
   `kinder_grade_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 /*Data for the table `kinder` */
 
@@ -111,7 +107,7 @@ CREATE TABLE `kinder_fee_history` (
   `deduction_prefee` int(11) DEFAULT 0,
   `fee_type` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 /*Data for the table `kinder_fee_history` */
 
@@ -138,14 +134,14 @@ CREATE TABLE `kinderleave` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `kinder_id` varchar(100) DEFAULT NULL,
   `kinder_name` varchar(100) DEFAULT NULL,
-  `leave_days` int(11) DEFAULT NULL,
+  `leave_days` int(11) DEFAULT 0,
   `operator_id` varchar(50) DEFAULT NULL,
   `leave_start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `leave_end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `operator_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `leave_description` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 /*Data for the table `kinderleave` */
 
@@ -243,19 +239,7 @@ CREATE TABLE `sequence` (
 
 /*Data for the table `sequence` */
 
-insert  into `sequence`(`name`,`current_value`,`increment`) values ('kinderFeeIdSeq',100000000,1),('kinderIdSeq',1,1),('kinderPreFeeIdSeq',200000000,1),('kinderRenewFeeIdSeq',300000000,1);
-
-/*Table structure for table `test` */
-
-DROP TABLE IF EXISTS `test`;
-
-CREATE TABLE `test` (
-  `name` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Data for the table `test` */
-
-insert  into `test`(`name`) values ('name0'),('name1'),('name2'),('name3'),('name4'),('name5'),('name6'),('name7'),('name8'),('name9'),('1'),('2009'),('2010');
+insert  into `sequence`(`name`,`current_value`,`increment`) values ('kinderFeeIdSeq',100000000,1),('kinderIdSeq',0,1),('kinderPreFeeIdSeq',200000000,1),('kinderRenewFeeIdSeq',300000000,1);
 
 /*Table structure for table `user` */
 
@@ -266,7 +250,7 @@ CREATE TABLE `user` (
   `user_name` varchar(50) DEFAULT NULL,
   `user_password` varchar(100) DEFAULT NULL,
   `user_sex` char(1) DEFAULT NULL,
-  `user_age` int(11) DEFAULT NULL,
+  `user_age` int(11) DEFAULT 0,
   `user_address` varchar(200) DEFAULT NULL,
   `user_mail` varchar(100) DEFAULT NULL,
   `user_phone` varchar(12) DEFAULT NULL,
@@ -276,7 +260,7 @@ CREATE TABLE `user` (
 
 /*Data for the table `user` */
 
-insert  into `user`(`user_id`,`user_name`,`user_password`,`user_sex`,`user_age`,`user_address`,`user_mail`,`user_phone`,`is_first`) values ('admin','管理员','1b3231655cebb7a1f783eddf27d254ca','M',18,'湖南长沙','admin@126.com','12345678911','F'),('lp','test','1b3231655cebb7a1f783eddf27d254ca','M',NULL,NULL,'','','T');
+insert  into `user`(`user_id`,`user_name`,`user_password`,`user_sex`,`user_age`,`user_address`,`user_mail`,`user_phone`,`is_first`) values ('admin','管理员','1b3231655cebb7a1f783eddf27d254ca','M',18,'湖南长沙','admin@126.com','12345678911','T');
 
 /*Table structure for table `user_oper_log` */
 
@@ -303,7 +287,7 @@ CREATE TABLE `user_role` (
 
 /*Data for the table `user_role` */
 
-insert  into `user_role`(`user_id`,`role_id`) values ('admin','r_0001'),('lp','r_0002');
+insert  into `user_role`(`user_id`,`role_id`) values ('admin','r_0001');
 
 /* Function  structure for function  `currval` */
 
