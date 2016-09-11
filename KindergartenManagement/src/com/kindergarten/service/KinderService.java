@@ -516,7 +516,7 @@ public class KinderService
 	}
 
 	/**
-	 * 查找学生历史缴费信息
+	 * 查找学生历史缴费信息，按缴费到期日期降序排序，第一条就是最近的一条缴费信息
 	 * */
 	public List<KinderFeeInfo> queryFeeHistory(String kinderId)
 	{
@@ -535,6 +535,7 @@ public class KinderService
 			{
 				KinderFeeInfo temp = new KinderFeeInfo();
 				temp.setKinderId(kinderId);
+				temp.setKinderFeeInfoId(resultSet.getInt("id"));
 				temp.setKinderName(resultSet.getString("kinder_name"));
 				temp.setFeeEvent(resultSet.getString("fee_event"));
 				temp.setFeeDays(resultSet.getInt("fee_days"));
@@ -574,7 +575,45 @@ public class KinderService
 		}
 		return feeHisList;
 	}
-
+	
+	/**
+	 * 作废原有缴费记录，插入更新时候的缴费记录
+	 * @throws SQLException 
+	 * 
+	 * */
+	public void updateKinderFee(KinderFeeInfo feeInfo , Connection connection) throws SQLException
+	{
+		StringBuilder sbFee = new StringBuilder();
+		sbFee.append(" insert into kinder_fee_history (fee_template_id,kinder_id,fee_days,fee_time,fee_expire_time,operator_user_id,operator_time,privilege_money,other_money,actual_money,feeVoucher_status,fee_event,deduction_prefee,fee_type) ");
+		sbFee.append(" values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		PreparedStatement pstmtFee = null;
+		pstmtFee = connection.prepareStatement(sbFee.toString());
+		pstmtFee.setInt(1, feeInfo.getFeeTemplateId());
+		pstmtFee.setString(2, feeInfo.getKinderId());
+		pstmtFee.setInt(3, feeInfo.getFeeDays());
+		pstmtFee.setDate(4, new java.sql.Date(feeInfo.getFeeTime().getTime()));
+		pstmtFee.setDate(5, new java.sql.Date(feeInfo.getFeeExpireTime().getTime()));
+		pstmtFee.setString(6, feeInfo.getOperator().getUserId());
+		pstmtFee.setDate(7, new java.sql.Date(feeInfo.getOperTime().getTime()));
+		pstmtFee.setDouble(8, feeInfo.getPrivilegeMoney());
+		pstmtFee.setDouble(9, feeInfo.getOtherMoney());
+		pstmtFee.setDouble(10, feeInfo.getActualMoney());
+		pstmtFee.setInt(11, feeInfo.getFeeVoucherStatus());
+		pstmtFee.setString(12, feeInfo.getFeeEvent());
+		pstmtFee.setDouble(13, feeInfo.getDeductionPreFee());
+		pstmtFee.setString(14, feeInfo.getFeeType());
+		pstmtFee.execute();
+		
+		StringBuilder sb2 = new StringBuilder();
+		sb2.append(" update kinder_fee_history set feeVoucher_status = ? where id = ? ");
+		PreparedStatement pstmtInvalidFee = null;
+		pstmtInvalidFee = connection.prepareStatement(sb2.toString());
+		pstmtInvalidFee.setInt(1, CommonUtil.INVALID);
+		pstmtInvalidFee.setInt(2, feeInfo.getKinderFeeInfoId());
+		pstmtInvalidFee.executeUpdate();
+	}
+	
+	
 	public void recordKinderFee(KinderFeeInfo feeInfo)
 	{
 		StringBuilder sbFee = new StringBuilder();

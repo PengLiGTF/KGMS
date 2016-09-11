@@ -122,6 +122,7 @@ public class KinderRecordGroup extends AbstractGroup
 		preFeeText.setText(String.valueOf(kinderFeeInfo.getPreFeeMoney()));
 		deductionPreFeeText.setText(String.valueOf(kinderFeeInfo.getDeductionPreFee()));
 		actualFee.setText(String.valueOf(df.format(actualFeeMoney)) + "(" + NumberToCN.number2CNMontrayUnit(new BigDecimal(actualFeeMoney)) + ")");
+		deductionPreFeeText.setEditable(false);
 	}
 
 	/**
@@ -759,10 +760,13 @@ public class KinderRecordGroup extends AbstractGroup
 				}
 				double deductionPreMoney = Double.valueOf(deductionPreFeeText.getText());
 				double preFeeMoney = Double.valueOf(preFeeText.getText());
-				if(deductionPreMoney > preFeeMoney)
+				if(!isEdit)
 				{
-					MessageBoxUtil.showWarnMessageBox(getShell(), "抵扣预交费用大于预交费用了,请确认预缴费足够");
-					return;
+					if(deductionPreMoney > preFeeMoney)
+					{
+						MessageBoxUtil.showWarnMessageBox(getShell(), "抵扣预交费用大于预交费用了,请确认预缴费足够");
+						return;
+					}
 				}
 				amount -= deductionPreMoney;
 				actualFee.setText(String.valueOf(df.format(amount)) + "(" + NumberToCN.number2CNMontrayUnit(new BigDecimal(amount)) + ")");

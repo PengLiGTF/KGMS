@@ -103,7 +103,8 @@ public class KinderLeaveService
 				expireDate = cl.getTime();
 				kinderInfo.setFeeExpireTime(expireDate);
 				kinderInfo.setFeeEvent("请假延迟费用到期日期");
-				new KinderService().recordKinderFee(kinderInfo);
+				//请假之后，作废之前的缴费记录（缴费记录中包含缴费到期时间），更新缴费到期时间
+				new KinderService().updateKinderFee(kinderInfo, connection);
 			}
 			connection.commit();
 		} catch (SQLException e)
@@ -129,6 +130,5 @@ public class KinderLeaveService
 			DbUtils.closeQuietly(pstmt);
 			DbUtils.closeQuietly(connection);
 		}
-
 	}
 }

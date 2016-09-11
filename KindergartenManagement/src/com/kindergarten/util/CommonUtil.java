@@ -37,6 +37,20 @@ public class CommonUtil
 
 	public static final String TIME_FORMAT_PATTERN = "yyyy-MM-dd";
 
+	public static String getFeeStatusNameByCode(int statusCode)
+	{
+		switch (statusCode)
+		{
+		case 101:
+			return "已审核";
+		case 102:
+			return "反审核";
+		case 103:
+			return "已作废";
+		}
+		return "";
+	}
+
 	public static <T> T getSelectedItem(ComboViewer vomboViewer)
 	{
 		StructuredSelection selectedGrade = (StructuredSelection) vomboViewer.getSelection();
@@ -75,13 +89,12 @@ public class CommonUtil
 	{
 		return money + "(" + NumberToCN.number2CNMontrayUnit(new BigDecimal(money)) + ")";
 	}
-	
+
 	public static String formatMoneyInChinese(Double money)
 	{
 		return money + "(" + NumberToCN.number2CNMontrayUnit(new BigDecimal(money)) + ")";
 	}
-	
-	
+
 	/**
 	 * 学生入园缴费序号
 	 * */
@@ -293,9 +306,6 @@ public class CommonUtil
 	public static void main(String[] args)
 	{
 		System.out.println(formatMoneyInChinese(0.00));
-		
-		
-		
 
 		// System.out.println(formatDateToString(new Date(),
 		// TIME_FORMAT_PATTERN));
@@ -306,7 +316,5 @@ public class CommonUtil
 		// System.out.println(generateFeeCheckId());
 
 	}
-
-
 
 }

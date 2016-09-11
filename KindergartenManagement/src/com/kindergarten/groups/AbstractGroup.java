@@ -12,8 +12,8 @@ public abstract class AbstractGroup extends Group
 	public AbstractGroup(Composite parent, int style, String userId)
 	{
 		super(parent, style);
-		parent.setBounds(190, 0, 800, 600);
-		this.setBounds(0, 0, 800, 600);
+		parent.setBounds(190, 0, 1024, 600);
+		this.setBounds(0, 0, 1024, 600);
 		this.userId = userId;
 		composite = new Composite(this, SWT.NONE);
 		composite.setBounds(10, 20, 800, 600);

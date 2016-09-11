@@ -65,7 +65,7 @@ public class MainFrame
 	public void open()
 	{
 		Display display = Display.getDefault();
-		final Shell shell = new Shell(SWT.CLOSE);
+		final Shell shell = new Shell(SWT.CLOSE | SWT.MIN|SWT.MAX);
 		shell.setMinimumSize(new Point(800, 600));
 		shell.setImage(SWTResourceManager.getImage(MainFrame.class, "/images/index.ico"));
 		shell.setSize(1024, 600);
