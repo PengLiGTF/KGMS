@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jface.fieldassist.AutoCompleteField;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
@@ -23,7 +25,6 @@ import com.ibm.icu.util.Calendar;
 import com.kindergarten.data.KinderLeaveInfo;
 import com.kindergarten.data.User;
 import com.kindergarten.groups.AbstractGroup;
-import com.kindergarten.groups.IndexGroup;
 import com.kindergarten.service.KinderLeaveService;
 import com.kindergarten.service.KinderService;
 import com.kindergarten.service.UserService;
@@ -42,6 +43,18 @@ public class KinderLeaveGroup extends AbstractGroup
 	private DateTime leaveEndTime;
 	private DateTime operTime;
 
+	private void addKinderIdContentAssistent(Text kinderIdText)
+	{
+		String kId = kinderIdText.getText();
+		if(kId != null && !"".equals(kId))
+		{
+			KinderService kinderService = new KinderService();
+			String[] strArr = kinderService.queryKinderIdList(kId).toArray(new String[0]);
+			new AutoCompleteField(kinderIdText, new TextContentAdapter(), strArr);
+		}
+	}
+	
+	
 	public KinderLeaveGroup(final Composite parent, int style, final String userId)
 	{
 		super(parent, style, userId);
@@ -240,6 +253,14 @@ public class KinderLeaveGroup extends AbstractGroup
 
 		kinderIdText = new Text(composite, SWT.BORDER);
 		kinderIdText.setBounds(77, 35, 174, 23);
+//		kinderIdText.addModifyListener(new ModifyListener(){
+//
+//			@Override
+//			public void modifyText(ModifyEvent e)
+//			{
+//				addKinderIdContentAssistent(kinderIdText);
+//			}
+//		});
 	}
 
 	private void setFeeExpireTimeAccordingStartTime(final DateTime feeExpireTime, final DateTime feeStartTime)

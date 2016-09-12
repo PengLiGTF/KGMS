@@ -1,6 +1,8 @@
 package com.kindergarten;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Button;
@@ -54,31 +56,7 @@ public class LoginFrame
 		{
 			public void mouseUp(MouseEvent e)
 			{
-				ValidateData vd = new ValidateData();
-				String userId = username.getText();
-				String passWord = password.getText();
-				if (vd.validLogin(shell, userId, passWord))
-				{
-					UserService adminService = new UserService();
-					User user = adminService.userIsValid(userId, passWord);
-					if (user != null)
-					{
-						if (user.getIsFirst() == 'T')
-						{
-							int result = new ChangePwdDialog(shell, userId).open();
-							while (result != 0)
-							{
-								MessageBoxUtil.showWarnMessageBox(shell, "请修改密码");
-								result = new ChangePwdDialog(shell, userId).open();
-							}
-						}
-						shell.close();
-						new MainFrame(userId).open();
-					} else
-					{
-						TipBox.Message(shell, "error", "用户名或密码错误");
-					}
-				}
+				entryLogin(shell);
 			}
 		});
 		btnLogin.setBounds(123, 171, 69, 24);
@@ -96,6 +74,24 @@ public class LoginFrame
 		button_1.setBounds(220, 171, 69, 24);
 		button_1.setText("取消");
 
+		password.addKeyListener(new KeyListener(){
+
+			@Override
+			public void keyPressed(KeyEvent e)
+			{
+				
+			}
+
+			@Override
+			public void keyReleased(KeyEvent keyEvent)
+			{
+				if(keyEvent.keyCode == SWT.CR)
+				{
+					entryLogin(shell);
+				}
+			}
+		});
+		
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed())
@@ -107,6 +103,34 @@ public class LoginFrame
 		}
 	}
 
+	private void entryLogin(final Shell shell)
+	{
+		ValidateData vd = new ValidateData();
+		String userId = username.getText();
+		String passWord = password.getText();
+		if (vd.validLogin(shell, userId, passWord))
+		{
+			UserService adminService = new UserService();
+			User user = adminService.userIsValid(userId, passWord);
+			if (user != null)
+			{
+				if (user.getIsFirst() == 'T')
+				{
+					int result = new ChangePwdDialog(shell, userId).open();
+					while (result != 0)
+					{
+						MessageBoxUtil.showWarnMessageBox(shell, "请修改密码");
+						result = new ChangePwdDialog(shell, userId).open();
+					}
+				}
+				shell.close();
+				new MainFrame(userId).open();
+			} else
+			{
+				TipBox.Message(shell, "error", "用户名或密码错误");
+			}
+		}
+	}
 	public static void main(String[] args)
 	{
 		new LoginFrame().openLoginFrame();

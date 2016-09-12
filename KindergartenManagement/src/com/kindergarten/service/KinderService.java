@@ -20,7 +20,44 @@ import com.kindergarten.util.FeeTypeConstant;
 
 public class KinderService
 {
-
+	
+	/**
+	 * 查询学生学号
+	 * 
+	 * */
+	public List<String> queryKinderIdList(String kinderIdText)
+	{
+		List<String> list = new ArrayList<String>();
+		StringBuilder sb = new StringBuilder();
+		sb.append(" select kinder_id from kinder where kinder_id like ? ");
+		PreparedStatement pstmt = null;
+		ResultSet resultSet = null;
+		Connection conn = DbUtils.getConnection();
+		if(kinderIdText != null && !"".equals(kinderIdText))
+		{
+			try
+			{
+				pstmt = conn.prepareStatement(sb.toString());
+				pstmt.setString(1, "%" + kinderIdText + "%");
+				resultSet = pstmt.executeQuery();
+				while(resultSet.next())
+				{
+					list.add(resultSet.getString("kinder_id"));
+				}
+			} catch (SQLException e)
+			{
+				e.printStackTrace();
+			}finally
+			{
+				DbUtils.closeQuietly(resultSet);
+				DbUtils.closeQuietly(pstmt);
+				DbUtils.closeQuietly(conn);
+			}
+		}
+		
+		return list;
+	}
+	
 	/**
 	 * 检测学号对于学生是否存在
 	 * */

@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.eclipse.swt.widgets.Display;
+
 public class DbUtils
 {
 	private static String driver;
@@ -65,6 +67,7 @@ public class DbUtils
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
+			MessageBoxUtil.showWarnMessageBox(Display.getDefault().getActiveShell(), "数据库连接失败，请检查数据库服务是否正常");
 		}
 		return connection;
 	}
