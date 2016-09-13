@@ -8,6 +8,8 @@ import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -22,6 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import com.ibm.icu.util.Calendar;
+import com.kindergarten.data.Kinder;
 import com.kindergarten.data.KinderLeaveInfo;
 import com.kindergarten.data.User;
 import com.kindergarten.groups.AbstractGroup;
@@ -46,15 +49,14 @@ public class KinderLeaveGroup extends AbstractGroup
 	private void addKinderIdContentAssistent(Text kinderIdText)
 	{
 		String kId = kinderIdText.getText();
-		if(kId != null && !"".equals(kId))
+		if (kId != null && !"".equals(kId))
 		{
 			KinderService kinderService = new KinderService();
 			String[] strArr = kinderService.queryKinderIdList(kId).toArray(new String[0]);
-			new AutoCompleteField(kinderIdText, new TextContentAdapter(), strArr);
+			CommonUtil.addContentAssistentToText(strArr, kinderIdText);
 		}
 	}
-	
-	
+
 	public KinderLeaveGroup(final Composite parent, int style, final String userId)
 	{
 		super(parent, style, userId);
@@ -172,11 +174,13 @@ public class KinderLeaveGroup extends AbstractGroup
 				try
 				{
 					KinderService kinderService = new KinderService();
-					if (!kinderService.isKinderExist(stuId))
+					Kinder kinder = kinderService.getKinderByKinderId(stuId);
+					if (kinder == null)
 					{
 						MessageBoxUtil.showWarnMessageBox(getShell(), "输入学生学号不存在");
 						return;
 					}
+					leaveInfo.setKinderName(kinder.getKinderName());
 					new KinderLeaveService().addLeave(leaveInfo);
 					MessageBoxUtil.showWarnMessageBox(getShell(), "请假条录入成功");
 					parent.getChildren()[0].dispose();
@@ -253,14 +257,36 @@ public class KinderLeaveGroup extends AbstractGroup
 
 		kinderIdText = new Text(composite, SWT.BORDER);
 		kinderIdText.setBounds(77, 35, 174, 23);
-//		kinderIdText.addModifyListener(new ModifyListener(){
-//
-//			@Override
-//			public void modifyText(ModifyEvent e)
-//			{
-//				addKinderIdContentAssistent(kinderIdText);
-//			}
-//		});
+		kinderIdText.addModifyListener(new ModifyListener()
+		{
+
+			@Override
+			public void modifyText(ModifyEvent e)
+			{
+				addKinderIdContentAssistent(kinderIdText);
+			}
+		});
+		kinderNameText.addFocusListener(new FocusListener()
+		{
+
+			@Override
+			public void focusGained(FocusEvent e)
+			{
+				String name = new KinderService().getKinderNameByKinderId(kinderIdText.getText());
+				if (name == null)
+				{
+					kinderIdText.setFocus();
+					MessageBoxUtil.showWarnMessageBox(getShell(), "学号对应的学生不存在，请检查输入");
+				} else
+				{
+					kinderNameText.setText(name);
+				}
+			}
+
+			@Override
+			public void focusLost(FocusEvent e)
+			{}
+		});
 	}
 
 	private void setFeeExpireTimeAccordingStartTime(final DateTime feeExpireTime, final DateTime feeStartTime)

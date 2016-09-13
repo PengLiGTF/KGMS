@@ -1,8 +1,13 @@
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
+import org.eclipse.jface.fieldassist.ContentProposal;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.swt.SWT;
@@ -89,7 +94,7 @@ public class LaunchApp
 		Dialog.applyDialogFont(this.shell);
 
 		//
-		this.addNameTextFieldAssist();
+		this.addNameTextFieldAssist(null, null);
 		this.addCityComboFieldAssist();
 		this.addRemarksTextFieldAssist();
 	}
@@ -97,12 +102,33 @@ public class LaunchApp
 	/**
 	 * 给名称Text添加自动完成功能
 	 */
-	private void addNameTextFieldAssist()
+	private void addNameTextFieldAssist(final String[] arr, Text textControl)
 	{
 		// 让text可以进行代码提示. 提示内容为: "aa", "BB", "无敌".
 		// 注意: 不区分大小写. [如: 输入'b', 内容中会出现"BB"]
-		new AutoCompleteField(nameT, new TextContentAdapter(), new String[]
-		{ "aa", "BB", "无敌" });
+		// new AutoCompleteField(nameT, new TextCtontentAdapter(), new String[]
+		// { "aa", "BB", "无敌" });
+		ContentProposalAdapter adapter = new ContentProposalAdapter(textControl, new TextContentAdapter(), new SimpleContentProposalProvider(arr)
+		{
+			@Override
+			public IContentProposal[] getProposals(String contents, int position)
+			{
+				List<ContentProposal> props = new ArrayList<ContentProposal>();
+				for (String temp : arr)
+				{
+					if (temp.toLowerCase().contains(contents.toLowerCase()))
+					{
+						ContentProposal prop = new ContentProposal(temp);
+						props.add(prop);
+					}
+				}
+				return props.toArray(new ContentProposal[0]);
+			}
+		}, null, null);
+		adapter.setAutoActivationDelay(200); // 延时200ms
+		adapter.setPropagateKeys(true); // 如果用户的输入值在内容列表中[比如输入'o',而内容中有'one'],则弹出popup的shell
+		adapter.setFilterStyle(ContentProposalAdapter.PROPOSAL_INSERT); // 用户同步输入的内容也过滤列表[如:用户输入'o',则弹出popup的shell中的内容列表被过滤,其中都是'o'开头的,
+		adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
 	}
 
 	/**

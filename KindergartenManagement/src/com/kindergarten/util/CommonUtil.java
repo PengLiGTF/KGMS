@@ -7,11 +7,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
+import org.eclipse.jface.fieldassist.ContentProposal;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.SimpleContentProposalProvider;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Text;
 
 import com.ibm.icu.util.Calendar;
 import com.kindergarten.data.KinderStatus;
@@ -51,6 +59,38 @@ public class CommonUtil
 		return "";
 	}
 
+	/**
+	 * 输入框提供类似google输入提示，数据量大时需要慎重用
+	 * */
+	public static void addContentAssistentToText(final String[] allContents, Text textControl)
+	{
+		ContentProposalAdapter adapter = new ContentProposalAdapter(textControl, new TextContentAdapter(), new SimpleContentProposalProvider(allContents)
+		{
+			@Override
+			public IContentProposal[] getProposals(String contents, int position)
+			{
+				List<ContentProposal> props = new ArrayList<ContentProposal>();
+				for (String temp : allContents)
+				{
+					if (temp.toLowerCase().contains(contents.toLowerCase()))
+					{
+						ContentProposal prop = new ContentProposal(temp);
+						props.add(prop);
+					}
+				}
+				return props.toArray(new ContentProposal[0]);
+			}
+		}, null, null);
+		//adapter.setAutoActivationDelay(200); // 延时200ms
+		adapter.setPropagateKeys(true); //
+		adapter.setFilterStyle(ContentProposalAdapter.PROPOSAL_INSERT); //
+		adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+
+	}
+
+	/**
+	 * 下拉框获取被选中的选项
+	 * */
 	public static <T> T getSelectedItem(ComboViewer vomboViewer)
 	{
 		StructuredSelection selectedGrade = (StructuredSelection) vomboViewer.getSelection();

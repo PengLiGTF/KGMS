@@ -20,44 +20,42 @@ import com.kindergarten.util.FeeTypeConstant;
 
 public class KinderService
 {
-	
+
 	/**
-	 * 查询学生学号
-	 * 
+	 * 查询学生学号,一次查出5条 因为该方法在输入学号时自动查找内容来匹配，调用频率大
 	 * */
 	public List<String> queryKinderIdList(String kinderIdText)
 	{
 		List<String> list = new ArrayList<String>();
 		StringBuilder sb = new StringBuilder();
-		sb.append(" select kinder_id from kinder where kinder_id like ? ");
+		sb.append(" select kinder_id from kinder where kinder_id like ? limit 5");
 		PreparedStatement pstmt = null;
 		ResultSet resultSet = null;
 		Connection conn = DbUtils.getConnection();
-		if(kinderIdText != null && !"".equals(kinderIdText))
+		if (kinderIdText != null && !"".equals(kinderIdText))
 		{
 			try
 			{
 				pstmt = conn.prepareStatement(sb.toString());
 				pstmt.setString(1, "%" + kinderIdText + "%");
 				resultSet = pstmt.executeQuery();
-				while(resultSet.next())
+				while (resultSet.next())
 				{
 					list.add(resultSet.getString("kinder_id"));
 				}
 			} catch (SQLException e)
 			{
 				e.printStackTrace();
-			}finally
+			} finally
 			{
 				DbUtils.closeQuietly(resultSet);
 				DbUtils.closeQuietly(pstmt);
 				DbUtils.closeQuietly(conn);
 			}
 		}
-		
 		return list;
 	}
-	
+
 	/**
 	 * 检测学号对于学生是否存在
 	 * */
@@ -118,10 +116,10 @@ public class KinderService
 			preFeeKinder.setPreFeeMoney(preFeeLeft);
 			addKinderWithTransaction(kinder, connection);
 			// 重新插入一条预交费记录，更新预交费状态
-			if(preFeeLeft > 0)
+			if (preFeeLeft > 0)
 			{
 				preFeeKinder.setFeeReason("预交费抵扣后剩余");
-				//剩余预缴费对应的优惠额和其他费用都清空
+				// 剩余预缴费对应的优惠额和其他费用都清空
 				preFeeKinder.setPrivilegeMoney(0.00D);
 				preFeeKinder.setOtherMoney(0.00D);
 				addPrefeeRecord(preFeeKinder, connection);
@@ -332,6 +330,33 @@ public class KinderService
 	}
 
 	/**
+	 * 根据学号获取学生姓名
+	 * 
+	 * */
+	public String getKinderNameByKinderId(String kinderId)
+	{
+		Connection connection = DbUtils.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet resultSet = null;
+		StringBuilder sb = new StringBuilder();
+		sb.append(" select kinder_name from kinder where kinder_id = ? ");
+		try
+		{
+			pstmt = connection.prepareStatement(sb.toString());
+			pstmt.setString(1, kinderId);
+			resultSet = pstmt.executeQuery();
+			while (resultSet.next())
+			{
+				return resultSet.getString(1);
+			}
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
 	 * 根据条件查询学生信息
 	 * 
 	 * */
@@ -459,7 +484,7 @@ public class KinderService
 	}
 
 	/**
-	 * 根据学号获取kinder信息
+	 * 根据学号获取kinder信息,暂时只获取到了名称和性别
 	 * */
 	public Kinder getKinderByKinderId(String kinderId)
 	{
@@ -583,13 +608,13 @@ public class KinderService
 				temp.setKinderClassId(resultSet.getInt("kinder_class_id"));
 				temp.setKinderGradeId(resultSet.getInt("kinder_grade_id"));
 				temp.setSex(resultSet.getString("kinder_sex").charAt(0));
-				
+
 				temp.setPreFeeMoney(resultSet.getDouble("pre_fee"));
 				temp.setPrivilegeMoney(resultSet.getDouble("privilege_money"));
 				temp.setOtherMoney(resultSet.getDouble("other_money"));
 				temp.setActualMoney(resultSet.getDouble("actual_money"));
 				temp.setDeductionPreFee(resultSet.getDouble("deduction_prefee"));
-				
+
 				User user = new User();
 				user.setUserId(resultSet.getString("operator_user_id"));
 				temp.setOperator(user);
@@ -612,13 +637,14 @@ public class KinderService
 		}
 		return feeHisList;
 	}
-	
+
 	/**
 	 * 作废原有缴费记录，插入更新时候的缴费记录
-	 * @throws SQLException 
+	 * 
+	 * @throws SQLException
 	 * 
 	 * */
-	public void updateKinderFee(KinderFeeInfo feeInfo , Connection connection) throws SQLException
+	public void updateKinderFee(KinderFeeInfo feeInfo, Connection connection) throws SQLException
 	{
 		StringBuilder sbFee = new StringBuilder();
 		sbFee.append(" insert into kinder_fee_history (fee_template_id,kinder_id,fee_days,fee_time,fee_expire_time,operator_user_id,operator_time,privilege_money,other_money,actual_money,feeVoucher_status,fee_event,deduction_prefee,fee_type) ");
@@ -640,7 +666,7 @@ public class KinderService
 		pstmtFee.setDouble(13, feeInfo.getDeductionPreFee());
 		pstmtFee.setString(14, feeInfo.getFeeType());
 		pstmtFee.execute();
-		
+
 		StringBuilder sb2 = new StringBuilder();
 		sb2.append(" update kinder_fee_history set feeVoucher_status = ? where id = ? ");
 		PreparedStatement pstmtInvalidFee = null;
@@ -649,8 +675,7 @@ public class KinderService
 		pstmtInvalidFee.setInt(2, feeInfo.getKinderFeeInfoId());
 		pstmtInvalidFee.executeUpdate();
 	}
-	
-	
+
 	public void recordKinderFee(KinderFeeInfo feeInfo)
 	{
 		StringBuilder sbFee = new StringBuilder();
