@@ -10,6 +10,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -45,17 +47,6 @@ public class KinderLeaveGroup extends AbstractGroup
 	private DateTime leaveStartTime;
 	private DateTime leaveEndTime;
 	private DateTime operTime;
-
-	private void addKinderIdContentAssistent(Text kinderIdText)
-	{
-		String kId = kinderIdText.getText();
-		if (kId != null && !"".equals(kId))
-		{
-			KinderService kinderService = new KinderService();
-			String[] strArr = kinderService.queryKinderIdList(kId).toArray(new String[0]);
-			CommonUtil.addContentAssistentToText(strArr, kinderIdText);
-		}
-	}
 
 	public KinderLeaveGroup(final Composite parent, int style, final String userId)
 	{
@@ -257,13 +248,13 @@ public class KinderLeaveGroup extends AbstractGroup
 
 		kinderIdText = new Text(composite, SWT.BORDER);
 		kinderIdText.setBounds(77, 35, 174, 23);
+
 		kinderIdText.addModifyListener(new ModifyListener()
 		{
-
 			@Override
 			public void modifyText(ModifyEvent e)
 			{
-				addKinderIdContentAssistent(kinderIdText);
+				CommonUtil.addKinderIdContentAssistent(kinderIdText);
 			}
 		});
 		kinderNameText.addFocusListener(new FocusListener()
@@ -285,7 +276,8 @@ public class KinderLeaveGroup extends AbstractGroup
 
 			@Override
 			public void focusLost(FocusEvent e)
-			{}
+			{
+			}
 		});
 	}
 

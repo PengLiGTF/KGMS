@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 
+import com.kindergarten.data.FeeStaticTypeModel;
 import com.kindergarten.data.FeeTemplate;
 import com.kindergarten.data.Grade;
 import com.kindergarten.data.SexModel;
@@ -22,7 +23,11 @@ public class ComboArrayContentProvider extends ArrayContentProvider
 	@Override
 	public Object[] getElements(Object inputElement)
 	{
-		if (cType == MyComboType.SEX)
+		if (cType == MyComboType.FEE_STATIC_TYPE)
+		{
+			FeeStaticTypeModel[] staticTypes = CommonUtil.getFeeStaticTypeModels();
+			return staticTypes;
+		} else if (cType == MyComboType.SEX)
 		{
 			SexModel[] sexs = CommonUtil.getSexModel();
 			return (Object[]) sexs;

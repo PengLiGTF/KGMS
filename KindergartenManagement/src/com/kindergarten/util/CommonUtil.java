@@ -22,11 +22,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Text;
 
 import com.ibm.icu.util.Calendar;
+import com.kindergarten.data.FeeStaticTypeModel;
 import com.kindergarten.data.KinderStatus;
 import com.kindergarten.data.SexModel;
+import com.kindergarten.service.KinderService;
 
 public class CommonUtil
 {
+	
 	/** 审核 */
 	public static final int CHECKED = 101;
 	/** 反审核 */
@@ -59,6 +62,17 @@ public class CommonUtil
 		return "";
 	}
 
+	public static void addKinderIdContentAssistent(Text kinderIdText)
+	{
+		String kId = kinderIdText.getText();
+		if (kId != null && !"".equals(kId))
+		{
+			KinderService kinderService = new KinderService();
+			String[] strArr = kinderService.queryKinderIdList(kId).toArray(new String[0]);
+			CommonUtil.addContentAssistentToText(strArr, kinderIdText);
+		}
+	}
+
 	/**
 	 * 输入框提供类似google输入提示，数据量大时需要慎重用
 	 * */
@@ -81,7 +95,7 @@ public class CommonUtil
 				return props.toArray(new ContentProposal[0]);
 			}
 		}, null, null);
-		//adapter.setAutoActivationDelay(200); // 延时200ms
+		// adapter.setAutoActivationDelay(200); // 延时200ms
 		adapter.setPropagateKeys(true); //
 		adapter.setFilterStyle(ContentProposalAdapter.PROPOSAL_INSERT); //
 		adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
@@ -284,6 +298,19 @@ public class CommonUtil
 			}
 		}
 		return "其他";
+	}
+
+	public static final String STATIC_BY_GRADE = "S_B_G";
+	public static final String STATIC_BY_CLASS = "S_B_C";
+	
+	/**
+	 * 获取费用统计分类
+	 * */
+	public static FeeStaticTypeModel[] getFeeStaticTypeModels()
+	{
+		FeeStaticTypeModel[] arrs = new FeeStaticTypeModel[]
+		{ new FeeStaticTypeModel("按班级统计", STATIC_BY_CLASS), new FeeStaticTypeModel("按年级统计", STATIC_BY_GRADE), };
+		return arrs;
 	}
 
 	public static SexModel[] getSexModel()

@@ -26,6 +26,7 @@ import com.kindergarten.groups.kinder.KinderLastFeeGroup;
 import com.kindergarten.groups.kinder.KinderLeaveGroup;
 import com.kindergarten.groups.kinder.KinderRecordGroup;
 import com.kindergarten.groups.kinder.PreFeeKinderListGroup;
+import com.kindergarten.groups.statics.FeeStaticGroup;
 import com.kindergarten.groups.user.AuthorityGrantGroup;
 import com.kindergarten.groups.user.UserListGroup;
 import com.kindergarten.service.UserService;
@@ -65,7 +66,7 @@ public class MainFrame
 	public void open()
 	{
 		Display display = Display.getDefault();
-		final Shell shell = new Shell(SWT.CLOSE | SWT.MIN|SWT.MAX);
+		final Shell shell = new Shell(SWT.CLOSE | SWT.MIN | SWT.MAX);
 		shell.setMinimumSize(new Point(800, 600));
 		shell.setImage(SWTResourceManager.getImage(MainFrame.class, "/images/index.ico"));
 		shell.setSize(1024, 600);
@@ -245,6 +246,9 @@ public class MainFrame
 				} else if (funName.equals("学生缴费修改"))
 				{
 					new KinderLastFeeGroup(comp, SWT.NONE, userId, "");
+				} else if (funName.equals("缴费统计"))
+				{
+					new FeeStaticGroup(comp, SWT.NONE, userId);
 				} else
 				{
 					new IndexGroup(comp, SWT.NONE, userId);
@@ -309,6 +313,9 @@ public class MainFrame
 				} else if (funName.equals("学生缴费修改"))
 				{
 					new KinderLastFeeGroup(comp, SWT.NONE, userId, "");
+				} else if (funName.equals("缴费统计"))
+				{
+					new FeeStaticGroup(comp, SWT.NONE, userId);
 				} else
 				{
 					new IndexGroup(comp, SWT.NONE, userId);

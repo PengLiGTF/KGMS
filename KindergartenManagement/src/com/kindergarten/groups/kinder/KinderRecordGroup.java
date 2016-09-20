@@ -143,7 +143,7 @@ public class KinderRecordGroup extends AbstractGroup
 		labelPreFee.setVisible(!isEdit);
 		preFeeText.setVisible(!isEdit);
 		preFeeText.setText(String.valueOf(kinderFeeInfo.getPreFeeMoney()));
-		//deductionPreFeeText.setEditable(false);
+		// deductionPreFeeText.setEditable(false);
 		deductionPreFeeText.setEnabled(true);
 		deductionPreFeeText.setText(String.valueOf(kinderFeeInfo.getPreFeeMoney()));
 		privilegeAmount.setText(String.valueOf(kinderFeeInfo.getPrivilegeMoney()));
@@ -499,7 +499,7 @@ public class KinderRecordGroup extends AbstractGroup
 				feeInfo.setFeeType(feeType);
 				if (isEdit)
 				{
-					//设置表主键，好去后台修改对应的记录
+					// 设置表主键，好去后台修改对应的记录
 					feeInfo.setKinderFeeInfoId(kinderFeeInfo.getKinderFeeInfoId());
 				}
 				String feeReason = "入园缴费";
@@ -651,7 +651,14 @@ public class KinderRecordGroup extends AbstractGroup
 
 		kinderId = new Text(composite, SWT.BORDER);
 		kinderId.setBounds(85, 69, 333, 23);
-		//kinderId.setEditable(false);
+		kinderId.addModifyListener(new ModifyListener()
+		{
+			@Override
+			public void modifyText(ModifyEvent e)
+			{
+				CommonUtil.addKinderIdContentAssistent(kinderId);
+			}
+		});
 
 		btnGenerateId = new Button(composite, SWT.NONE);
 		btnGenerateId.setBounds(453, 69, 80, 27);
@@ -707,18 +714,18 @@ public class KinderRecordGroup extends AbstractGroup
 				FeeTemplate feeTemplate = (FeeTemplate) SelectedFeeTemplate.getFirstElement();
 				double mount = feeTemplate.getFeeAmount();
 				String feeDaysStr = feeDays.getText();
-				if(StringUtils.isBlank(feeDaysStr))
+				if (StringUtils.isBlank(feeDaysStr))
 				{
 					MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数不能为空");
 					return;
 				}
-				if(!CommonUtil.isDigital(feeDaysStr))
+				if (!CommonUtil.isDigital(feeDaysStr))
 				{
 					MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数必须为正确的数字格式");
 					return;
 				}
 				int day = Integer.parseInt(feeDaysStr);
-				if(day <= 0 || day % 30 != 0)
+				if (day <= 0 || day % 30 != 0)
 				{
 					MessageBoxUtil.showWarnMessageBox(getShell(), "缴费天数必须为30的倍数");
 					return;
@@ -760,9 +767,9 @@ public class KinderRecordGroup extends AbstractGroup
 				}
 				double deductionPreMoney = Double.valueOf(deductionPreFeeText.getText());
 				double preFeeMoney = Double.valueOf(preFeeText.getText());
-				if(!isEdit)
+				if (!isEdit)
 				{
-					if(deductionPreMoney > preFeeMoney)
+					if (deductionPreMoney > preFeeMoney)
 					{
 						MessageBoxUtil.showWarnMessageBox(getShell(), "抵扣预交费用大于预交费用了,请确认预缴费足够");
 						return;
@@ -803,7 +810,7 @@ public class KinderRecordGroup extends AbstractGroup
 		deductionPreFeeText = new Text(composite, SWT.BORDER);
 		deductionPreFeeText.setText("0.00");
 		deductionPreFeeText.setEditable(true);
-		//deductionPreFeeText.setEnabled(false);
+		// deductionPreFeeText.setEnabled(false);
 		deductionPreFeeText.setBounds(359, 258, 174, 23);
 		comboViewerStatus.setContentProvider(new ComboArrayContentProvider(MyComboType.STATUS));
 		comboViewerStatus.setLabelProvider(new ComboILabelProvider());

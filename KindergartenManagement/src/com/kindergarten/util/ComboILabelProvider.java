@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 import com.kindergarten.data.ClassModel;
+import com.kindergarten.data.FeeStaticTypeModel;
 import com.kindergarten.data.FeeTemplate;
 import com.kindergarten.data.Grade;
 import com.kindergarten.data.KinderStatus;
@@ -73,6 +74,10 @@ public class ComboILabelProvider implements ILabelProvider, IColorProvider
 		{
 			KinderStatus status = (KinderStatus) element;
 			return status.getStatusName();
+		} else if (FeeStaticTypeModel.class.isInstance(element))
+		{
+			FeeStaticTypeModel temp = (FeeStaticTypeModel) element;
+			return temp.getName();
 		}
 		return null;
 	}
