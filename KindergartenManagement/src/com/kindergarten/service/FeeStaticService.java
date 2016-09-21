@@ -45,8 +45,8 @@ public class FeeStaticService
 
 		sb.append(" union ");
 
-		sb.append("SELECT '合计' grade_name, '' grade_id,''class_id,'' class_name,SUM(t3.sumPrivilegeMoney) sumPrivilegeMoney,SUM(t3.sumOtherMoney) sumOtherMoney,SUM(t3.sumActualMoney) sumActualMoney,");
-		sb.append("SUM(t3.sumPreFee) sumPreFee,SUM(t3.sumDeductionPrefee) sumDeductionPrefee,SUM(t3.totalMoney) totalMoney");
+		sb.append("SELECT '合计' grade_name, '' grade_id,''class_id,'' class_name,SUM(t3.sumPrivilegeMoney) sumPrivilegeMoney,SUM(t3.sumOtherMoney) sumOtherMoney,SUM(t3.sumPreFee) sumPreFee,SUM(t3.sumDeductionPrefee) sumDeductionPrefee,SUM(t3.sumActualMoney) sumActualMoney,");
+		sb.append("SUM(t3.totalMoney) totalMoney");
 		sb.append(" from ");
 		sb.append(" ( ");
 

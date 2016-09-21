@@ -10,6 +10,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -25,6 +27,7 @@ import com.kindergarten.util.ComboArrayContentProvider;
 import com.kindergarten.util.ComboILabelProvider;
 import com.kindergarten.util.CommonUtil;
 import com.kindergarten.util.MyComboType;
+import com.kindergarten.util.print.PrinterUtil;
 
 /**
  * 费用统计
@@ -33,8 +36,9 @@ public class FeeStaticGroup extends AbstractGroup
 {
 	private Table table;
 	private final TableViewer tableViewer;
+	private volatile boolean isGrade = false;
 
-	public FeeStaticGroup(Composite parent, int style, String userId)
+	public FeeStaticGroup(final Composite parent, int style, String userId)
 	{
 		super(parent, style, userId);
 		this.setText("费用统计");
@@ -49,21 +53,6 @@ public class FeeStaticGroup extends AbstractGroup
 		comboViewer.setContentProvider(new ComboArrayContentProvider(MyComboType.FEE_STATIC_TYPE));
 		comboViewer.setLabelProvider(new ComboILabelProvider());
 		comboViewer.setInput(new FeeStaticTypeModel[0]);
-
-		comboViewer.addSelectionChangedListener(new ISelectionChangedListener()
-		{
-			@Override
-			public void selectionChanged(SelectionChangedEvent event)
-			{
-				FeeStaticTypeModel temp = CommonUtil.getSelectedItem(comboViewer);
-				if (temp != null)
-				{
-					String code = temp.getCode();
-					List<FeeStaticModel> modelList = new FeeStaticService().doFeeStatic(code);
-					tableViewer.setInput(modelList.toArray(new FeeStaticModel[0]));
-				}
-			}
-		});
 
 		Label label_1 = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label_1.setBounds(7, 44, 783, 2);
@@ -93,8 +82,8 @@ public class FeeStaticGroup extends AbstractGroup
 			}
 		});
 
-		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
-		TableColumn tblclmnNewColumn_1 = tableViewerColumn_1.getColumn();
+		final TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
+		final TableColumn tblclmnNewColumn_1 = tableViewerColumn_1.getColumn();
 		tblclmnNewColumn_1.setWidth(92);
 		tblclmnNewColumn_1.setText("班级");
 		tableViewerColumn_1.setLabelProvider(new ColumnLabelProvider()
@@ -103,10 +92,35 @@ public class FeeStaticGroup extends AbstractGroup
 			public String getText(Object element)
 			{
 				FeeStaticModel temp = (FeeStaticModel) element;
+				if (isGrade)
+				{
+					return "";
+				}
 				return temp.getClassName();
 			}
 		});
-
+		comboViewer.addSelectionChangedListener(new ISelectionChangedListener()
+		{
+			@Override
+			public void selectionChanged(SelectionChangedEvent event)
+			{
+				FeeStaticTypeModel temp = CommonUtil.getSelectedItem(comboViewer);
+				if (temp != null)
+				{
+					String code = temp.getCode();
+					if (CommonUtil.STATIC_BY_GRADE.equals(code))
+					{
+						isGrade = true;
+					}else
+					{
+						isGrade = false;
+					}
+					
+					List<FeeStaticModel> modelList = new FeeStaticService().doFeeStatic(code);
+					tableViewer.setInput(modelList.toArray(new FeeStaticModel[0]));
+				}
+			}
+		});
 		TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(tableViewer, SWT.NONE);
 		TableColumn tblclmnNewColumn_2 = tableViewerColumn_2.getColumn();
 		tblclmnNewColumn_2.setWidth(100);
@@ -188,6 +202,31 @@ public class FeeStaticGroup extends AbstractGroup
 			{
 				FeeStaticModel temp = (FeeStaticModel) element;
 				return String.valueOf(temp.getTotalMoney());
+			}
+		});
+
+		Button btnprint = new Button(composite, SWT.NONE);
+		btnprint.setBounds(482, 13, 80, 27);
+		btnprint.setText("打印");
+		btnprint.addMouseListener(new MouseListener()
+		{
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e)
+			{
+				
+			}
+
+			@Override
+			public void mouseDown(MouseEvent e)
+			{
+				
+			}
+
+			@Override
+			public void mouseUp(MouseEvent e)
+			{
+				PrinterUtil.printTable(table, getShell(), "费用统计信息打印");
 			}
 		});
 
